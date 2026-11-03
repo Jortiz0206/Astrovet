@@ -1,0 +1,86 @@
+.capitan-misi {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 640px;
+  margin: 1.2rem auto;
+  text-align: left;
+}
+
+/* Recorte circular de la cara del logo */
+.capitan-cara {
+  flex-shrink: 0;
+  width: 110px;
+  height: 110px;
+  background: #fff url("/logo-astrovet.png") no-repeat;
+  background-size: 220%;
+  background-position: 50% 19%;
+  border: 4px solid #cdbcff;
+  border-radius: 50%;
+  box-shadow: 0 6px 0 #a893f0;
+  animation: misi-habla 4s ease-in-out infinite;
+}
+
+.capitan-misi.hablando .capitan-cara {
+  animation: misi-habla 0.7s ease-in-out infinite;
+  border-color: #ffd23f;
+  box-shadow: 0 6px 0 #e0b000;
+}
+
+@keyframes misi-habla {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+/* Burbuja de diálogo */
+.capitan-mensaje {
+  position: relative;
+  flex: 1;
+  padding: 1rem 1.2rem;
+  background: #fff8e1;
+  border: 4px solid #ffd23f;
+  border-radius: 28px 28px 28px 6px;
+}
+
+/* Colita de la burbuja, apunta a Misi */
+.capitan-mensaje::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  bottom: 18px;
+  border: 10px solid transparent;
+  border-right-color: #ffd23f;
+}
+
+.capitan-mensaje p {
+  margin: 0 0 0.7rem;
+  font-family: "Lexend", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #2b2350;
+}
+
+.capitan-boton {
+  min-height: 52px;
+  margin: 0;
+  padding: 0.5rem 1.3rem;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 520px) {
+  .capitan-misi { flex-direction: column; text-align: center; }
+  .capitan-mensaje { border-radius: 28px; }
+  .capitan-mensaje::before {
+    left: 50%;
+    bottom: auto;
+    top: -20px;
+    transform: translateX(-50%);
+    border-right-color: transparent;
+    border-bottom-color: #ffd23f;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capitan-cara,
+  .capitan-misi.hablando .capitan-cara { animation: none !important; }
+}
