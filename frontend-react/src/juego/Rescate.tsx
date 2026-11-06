@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 import { Grupo, type ClaveCriatura } from "../componentes/Criatura";
 import Icono from "../componentes/Icono";
@@ -104,6 +105,7 @@ export default function Rescate({
           <Nube className="rescate-nube-der" espejo />
         </>
       ) : null}
+      {revelado === "cristal" ? <Cristal /> : null}
       {revelado === "lianas" ? (
         <>
           <Lianas className="rescate-lianas-izq" />
@@ -156,6 +158,43 @@ function Lianas({ className, espejo }: { className: string; espejo?: boolean }) 
         </g>
       ))}
       </g>
+    </svg>
+  );
+}
+
+/** Cristal de hielo del cometa: se raja y sus trozos se apartan para liberar al animal. */
+function Cristal() {
+  // Trozos de un prisma alrededor del animal: [puntos, dirección de salida en grados].
+  const trozos: [string, number][] = [
+    ["20,40 70,6 92,62 40,96", -140],
+    ["70,6 130,0 116,58 92,62", -90],
+    ["130,0 190,22 172,82 116,58", -40],
+    ["190,22 236,70 206,130 172,82", 10],
+    ["206,130 236,70 240,190 196,206", 40],
+    ["196,206 240,190 200,254 146,250", 80],
+    ["146,250 200,254 120,280 96,236", 100],
+    ["96,236 120,280 46,256 52,200", 140],
+    ["52,200 46,256 4,186 26,150", 170],
+    ["26,150 4,186 20,40 40,96", -170],
+  ];
+  return (
+    <svg viewBox="0 0 240 280" className="rescate-cristal absolute inset-0 m-auto h-full" aria-hidden="true">
+      {/* Núcleo de hielo: deja ver al animal borroso y se derrite primero */}
+      <polygon points="40,96 92,62 172,82 206,130 196,206 96,236 52,200 26,150" className="rescate-nucleo" fill="#DDF1FB" fillOpacity="0.6" />
+      {trozos.map(([pts, ang], i) => (
+        <polygon
+          key={i}
+          points={pts}
+          className="rescate-trozo"
+          style={{ "--dx": `${Math.cos((ang * Math.PI) / 180) * 120}px`, "--dy": `${Math.sin((ang * Math.PI) / 180) * 120}px`, "--giro": `${(i % 2 ? 1 : -1) * 40}deg` } as CSSProperties}
+          fill={i % 3 === 0 ? "#DDF1FB" : i % 3 === 1 ? "#BFE3F7" : "#A7D3EA"}
+          fillOpacity="0.88"
+          stroke="#FFFFFF"
+          strokeWidth="3"
+          strokeLinejoin="round"
+        />
+      ))}
+      <path d="M70 40 L96 120 M150 30 L134 110 M200 120 L150 150 M90 230 L118 170" className="rescate-grieta" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
     </svg>
   );
 }

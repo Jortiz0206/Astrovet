@@ -396,10 +396,72 @@ const mundo3: Mundo = {
   ],
 };
 
+// ---------- Mundo 4: Cometa Cristal (T, N, D) ----------
+// Sonidos frecuentes que abren muchas palabras nuevas (PATO, LUNA, DEDO).
+// Mismo patrón: presentar el sonido, combinarlo con las vocales, usarlo en
+// palabras y cerrar con un gran rescate. Cada palabra usa solo letras ya
+// trabajadas: NIDO llega después de presentar la D.
+
+const tito = animal("Tito", "pato", "pato");
+const nico = animal("Nico", "mono", "mono");
+const dino = animal("Dino", "dinosaurio", "dino");
+/** Palabras con dibujo que el niño ya puede leer al llegar al mundo 4. */
+const LEIBLES_4 = ["MESA", "SOPA", "LUPA", "PATO", "LUNA", "MAPA", "PALA", "PELOTA"];
+
+const mundo4: Mundo = {
+  id: 4,
+  nombre: "Cometa Cristal",
+  tema: "Consonantes T, N, D",
+  historia: "Un cometa de hielo se está derritiendo. Cada palabra que lees enciende una luz que guía a los animales atrapados en cristales.",
+  revelado: "cristal",
+  disponible: true,
+  misiones: [
+    mision(4, 1, "El sonido de Tito", tito, "Sonido /t/", [
+      globos("M4.1-1", ["T"], ["M", "P", "S", "A"]),
+      sonidoInicial("M4.1-2", ["TOMATE", "TAPA"], ["M", "P", "S", "L", "A"]),
+      traza("M4.1-3", ["T"]),
+    ]),
+    mision(4, 2, "Palabras con T", tito, "TA, TE, TI, TO, TU; PATO, TAPA, MOTO", [
+      unePiezas("M4.2-1", ["TA", "TE", "TO"]),
+      ruleta("M4.2-2", ["TU", "TI"]),
+      armaPalabra("M4.2-3", [["PATO", ["PA", "TO"]], ["TAPA", ["TA", "PA"]], ["MOTO", ["MO", "TO"], "LA"]]),
+    ]),
+    mision(4, 3, "El sonido de Nico", nico, "Sonido /n/", [
+      pesca("M4.3-1", ["N"], ["M", "T", "L", "A"]),
+      escuchaElige("M4.3-2", ["N", "NA", "NO"], ["N", "M", "T", ...SIL("N"), "MA", "TO"]),
+      figura("M4.3-3", [["robot", ["N", "T", "A", "O"]]]),
+    ]),
+    mision(4, 4, "Palabras con N", nico, "NA, NE, NI, NO, NU; LUNA, MANO, MONO", [
+      eco("M4.4-1", [["NA", "NE"], ["NI", "NO", "NU"]], SIL("N")),
+      armaPalabra("M4.4-2", [["LUNA", ["LU", "NA"]], ["MANO", ["MA", "NO"], "TI"], ["MONO", ["MO", "NO"]]]),
+      leeEncuentra("M4.4-3", ["LUNA", "MANO", "MONO"], ["MESA", "PATO", "SOPA", "TAPA"]),
+    ]),
+    mision(4, 5, "El sonido de Dino", dino, "Sonido /d/", [
+      resortera("M4.5-1", ["D", "D"], ["T", "N", "P", "M"]),
+      sonidoInicial("M4.5-2", ["DADO", "DEDO", "DONA"], ["T", "N", "P", "M", "A"]),
+      traza("M4.5-3", ["D"]),
+    ]),
+    mision(4, 6, "Palabras con D", dino, "DA, DE, DI, DO, DU; DADO, DEDO, NIDO", [
+      carrera("M4.6-1", ["DA", "DU"], [...SIL("D"), "TA", "NA"]),
+      armaPalabra("M4.6-2", [["DADO", ["DA", "DO"]], ["DEDO", ["DE", "DO"], "TO"], ["DONA", ["DO", "NA"], "MA"]]),
+      silabaPerdida("M4.6-3", [["NIDO", ["NI", "DO"], 1, ["TO", "NA"]], ["DEDO", ["DE", "DO"], 0, ["TE", "NE"]]]),
+    ]),
+    mision(4, 7, "Gran rescate: las palabras largas", animal("Kira", "cabra", "cabra"), "TOMATE, PELOTA, MALETA", [
+      armaPalabra("M4.7-1", [["TOMATE", ["TO", "MA", "TE"]], ["PELOTA", ["PE", "LO", "TA"]], ["MALETA", ["MA", "LE", "TA"], "NO"]]),
+      leeEncuentra("M4.7-2", ["TOMATE", "MALETA", "PELOTA"], ["NIDO", "DADO", "MOTO", ...LEIBLES_4]),
+      clasifica("M4.7-3", ["T", "D"], ["TOMATE", "DADO", "TAPA", "DEDO", "DONA"]),
+      memoria("M4.7-4", [["T", "TAPA"], ["N", "NIDO"], ["D", "DADO"]]),
+    ], 30),
+  ],
+};
+
 /** Palabras que se leen en el mundo 3 (solo usan letras ya trabajadas). */
 export const PALABRAS_LECTURA = LECTURA;
 
-export const MUNDOS: Mundo[] = [mundo1, mundo2, mundo3];
+/** Palabras que se leen en el mundo 4 (suman T, N y D). */
+export const PALABRAS_LECTURA_4 = ["PATO", "TAPA", "MOTO", "LUNA", "MANO", "MONO", "DADO", "DEDO", "DONA", "NIDO", "TOMATE", "PELOTA", "MALETA"];
+
+export const MUNDOS: Mundo[] = [mundo1, mundo2, mundo3, mundo4];
 
 /** Todas las misiones en el orden del recorrido (RN-06). */
 export const MISIONES: Mision[] = MUNDOS.flatMap((m) => m.misiones);

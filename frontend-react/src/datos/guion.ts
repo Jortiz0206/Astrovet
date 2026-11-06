@@ -73,7 +73,7 @@ export const CONSIGNAS = {
   stepping_stones: "Ayuda a cruzar el río. Pisa las piedras con:",
   sort_two: "Lleva cada dibujo al planeta de su primer sonido.",
   trace_letter: "Sigue la estela con tu dedo:",
-  echo_sequence: "Escucha a Misi y repite en el mismo orden.",
+  echo_sequence: "Escúchame y repite en el mismo orden.",
   feed_animal: "Llévale al animal lo que empieza con:",
   puzzle: "Arma el rompecabezas. Busca la pieza con:",
   build_figure: "Arma la figura: lleva cada pieza al lugar de su letra.",

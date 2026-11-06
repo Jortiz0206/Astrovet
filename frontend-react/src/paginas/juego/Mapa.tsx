@@ -77,8 +77,8 @@ export default function Mapa() {
       .join(" ");
 
   return (
-    <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center gap-6 px-4 py-5">
-      <nav className="selector-mundos flex w-full justify-center gap-2 sm:gap-4" aria-label="Mundos">
+    <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center gap-6 px-4 py-5">
+      <nav className="selector-mundos flex w-full justify-center gap-2 sm:gap-3" aria-label="Mundos">
         {MUNDOS.map((m) => {
           const activo = m.id === mundo.id;
           const libre = mundoAbierto(m, estados);
@@ -89,12 +89,12 @@ export default function Mapa() {
               type="button"
               onClick={() => elegirMundo(m)}
               aria-pressed={activo}
-              className={`mundo-tab relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.75rem] px-2 pt-2 pb-3 transition-colors duration-200 sm:flex-none sm:px-5 ${activo ? "mundo-tab-activo" : "hover:bg-white/8"}`}
+              className={`mundo-tab relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.75rem] px-1 pt-2 pb-3 transition-colors duration-200 sm:flex-none sm:px-4 ${activo ? "mundo-tab-activo" : "hover:bg-white/8"}`}
             >
               <span className={`transition-transform duration-300 ${activo ? "scale-110" : "scale-90 opacity-80"} ${libre ? "" : "grayscale-[0.7]"}`}>
                 <Planeta mundo={m.id} tamano={64} />
               </span>
-              <span className="truncate text-sm font-extrabold sm:text-base">{m.nombre}</span>
+              <span className="w-full text-center text-[13px] leading-tight font-extrabold text-balance sm:text-base">{m.nombre}</span>
               <span className="flex items-center gap-1 text-xs font-bold text-white/70 tabular-nums">
                 {libre ? (
                   <>
@@ -110,7 +110,7 @@ export default function Mapa() {
         })}
       </nav>
 
-      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} tamano={80} onEscuchar={() => hablar(mensaje)} />
+      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} personaje={jugador.personaje} variante={jugador.pelajes?.[jugador.personaje ?? "misi"]} tamano={80} onEscuchar={() => hablar(mensaje)} />
 
       <div className="ruta relative w-full max-w-xl" style={{ height: alto }}>
         <svg className="absolute inset-0 size-full overflow-visible" viewBox={`0 0 100 ${alto}`} preserveAspectRatio="none" aria-hidden="true">

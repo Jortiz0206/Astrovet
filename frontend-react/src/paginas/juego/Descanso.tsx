@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
+import { PersonajeDe } from "../../componentes/Personaje";
 import { useNavigate } from "react-router-dom";
 import Icono from "../../componentes/Icono";
-import Misi from "../../componentes/Misi";
 import { BotonMantener } from "../../componentes/ui";
 import { useJuego } from "../../contexto/Juego";
 import { GUION } from "../../datos/guion";
@@ -58,7 +58,7 @@ export default function Descanso() {
         </span>
       </div>
       <div className="relative grid size-56 place-items-center rounded-full bg-lavanda/20 ring-8 ring-lavanda/20 sm:size-64">
-        <Misi pelaje={jugador.pelaje} animo="duerme" tamano={200} />
+        <PersonajeDe jugador={jugador} animo="duerme" tamano={200} />
       </div>
       <div className="relative max-w-xl">
         <h1 className="text-3xl font-black text-lavanda-claro sm:text-4xl">Hora de descansar</h1>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { PersonajeDe } from "../../componentes/Personaje";
 import { Link, useNavigate } from "react-router-dom";
 import { MarcoAdulto } from "../../componentes/MarcoAdulto";
 import Misi from "../../componentes/Misi";
@@ -72,7 +73,7 @@ function TarjetaPerfil({ jugador, onJugar, iniciando }: { jugador: Jugador; onJu
     <article className="rounded-3xl bg-white p-5 ring-1 ring-celeste-oscuro sm:p-6">
       <div className="flex flex-wrap items-center gap-4">
         <div className="grid size-20 shrink-0 place-items-center rounded-full cielo-noche">
-          <Misi pelaje={jugador.pelaje} tamano={68} />
+          <PersonajeDe jugador={jugador} tamano={68} />
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-2xl font-black">{jugador.apodo}</h2>

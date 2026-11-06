@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
+import { PersonajeDe } from "../../componentes/Personaje";
 import { Link } from "react-router-dom";
 import { Grupo } from "../../componentes/Criatura";
 import Icono from "../../componentes/Icono";
-import Misi from "../../componentes/Misi";
 import MisiDice from "../../componentes/MisiDice";
 import Planeta from "../../componentes/Planeta";
 import { useJuego } from "../../contexto/Juego";
@@ -24,7 +24,7 @@ export default function CentroEspacial() {
 
   return (
     <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center gap-7 px-4 py-7">
-      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} tamano={104} onEscuchar={() => hablar(mensaje)} />
+      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} personaje={jugador.personaje} variante={jugador.pelajes?.[jugador.personaje ?? "misi"]} tamano={104} onEscuchar={() => hablar(mensaje)} />
 
       <div className="grid w-full gap-4 sm:grid-cols-[1.35fr_1fr] sm:grid-rows-2">
         <Link to={siguiente ? `/juego/mapa?mundo=${siguiente.idMundo}` : "/juego/mapa"} viewTransition className="destino destino-mapa group relative flex min-h-56 flex-col justify-end overflow-hidden rounded-[2.25rem] p-6 sm:row-span-2 sm:min-h-80">
@@ -62,7 +62,7 @@ export default function CentroEspacial() {
         </Link>
 
         <div className="grid grid-cols-2 gap-4">
-          <Link to="/juego/clinica" viewTransition className="destino destino-clinica relative flex min-h-32 flex-col justify-between overflow-hidden rounded-[2rem] p-5">
+          <Link to="/juego/casa/clinica" viewTransition className="destino destino-clinica relative flex min-h-32 flex-col justify-between overflow-hidden rounded-[2rem] p-5">
             <span className="flex -space-x-5" aria-hidden="true">
               {rescatados.length ? (
                 rescatados.slice(-3).map((m) => <Grupo key={m.id} claves={[m.animal.claves[0]]} tamano={52} />)
@@ -79,11 +79,11 @@ export default function CentroEspacial() {
           </Link>
           <Link to="/juego/vestidor" viewTransition className="destino destino-vestidor relative flex min-h-32 flex-col justify-between overflow-hidden rounded-[2rem] p-5">
             <span aria-hidden="true">
-              <Misi pelaje={jugador.pelaje} tamano={56} />
+              <PersonajeDe jugador={jugador} tamano={56} />
             </span>
             <span>
               <span className="block text-xl font-black text-white">Vestidor</span>
-              <span className="block text-sm font-bold text-white/85">Viste a Misi.</span>
+              <span className="block text-sm font-bold text-white/85">Elige tu personaje.</span>
             </span>
           </Link>
         </div>

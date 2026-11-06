@@ -25,6 +25,21 @@ export default function Planeta({ mundo, tamano = 96, className = "" }: { mundo:
           <path d="M96 16 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#FFD166" {...P} strokeWidth={2} />
           <path d="M18 96 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#FFD166" />
         </>
+      ) : mundo === 4 ? (
+        <>
+          {/* Cola del cometa: tres estelas que se abren hacia atrás */}
+          <path d="M70 52 C92 40 106 22 116 4" fill="none" stroke="#9FD3F2" strokeWidth="14" strokeLinecap="round" opacity="0.55" />
+          <path d="M72 62 C98 58 112 46 120 30" fill="none" stroke="#DDF1FB" strokeWidth="9" strokeLinecap="round" opacity="0.8" />
+          <path d="M66 44 C78 28 84 14 86 0" fill="none" stroke="#B9A8E6" strokeWidth="7" strokeLinecap="round" opacity="0.7" />
+          {/* Núcleo de cristal facetado */}
+          <path d="M50 26 L80 38 L90 70 L66 96 L32 88 L22 56 Z" fill="#BFE3F7" {...P} />
+          <path d="M50 26 L56 58 L22 56 M56 58 L90 70 M56 58 L66 96 M56 58 L80 38" fill="none" stroke="#2B2440" strokeWidth="2" strokeLinejoin="round" opacity="0.55" />
+          <path d="M50 26 L80 38 L56 58 Z" fill="#EEF8FD" />
+          <path d="M56 58 L90 70 L66 96 Z" fill="#9FD3F2" />
+          <path d="M32 40 L40 32" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+          <path d="M14 104 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="#FFD166" />
+          <path d="M102 92 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 z" fill="#DDF1FB" />
+        </>
       ) : (
         <>
           <circle cx="60" cy="62" r="38" fill="#4FB08A" {...P} />

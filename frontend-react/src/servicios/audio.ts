@@ -119,7 +119,7 @@ export function claveAudio(contenido: string): string {
  * Las consonantes se aproximan alargando su sonido, nunca con su nombre
  * («mmm», no «eme»). Es una aproximación: la grabación humana es la meta.
  */
-const FONEMAS: Record<string, string> = { M: "mmm", S: "sss", L: "lll", P: "p", N: "nnn", F: "fff" };
+const FONEMAS: Record<string, string> = { M: "mmm", S: "sss", L: "lll", P: "p", N: "nnn", F: "fff", T: "t", D: "d" };
 
 function textoSintetico(contenido: string): string {
   const t = contenido.toUpperCase();
@@ -361,7 +361,7 @@ function soplo(c: AudioContext, inicio: number, duracion: number, desde: number,
   fuente.start(t0);
 }
 
-export type Efecto = "toque" | "paso" | "acierto" | "intento" | "voltear" | "unir" | "girar" | "patita" | "rescate" | "cierre";
+export type Efecto = "toque" | "paso" | "acierto" | "intento" | "voltear" | "unir" | "girar" | "patita" | "rescate" | "cierre" | "latido" | "burbuja";
 
 /**
  * Reproduce un efecto. `nivel` sube la nota: cada acierto de la misión
@@ -404,6 +404,14 @@ export function efecto(nombre: Efecto, nivel = 0): void {
     case "rescate":
       [0, 2, 4, 5, 7].forEach((i, k) => marimba(c, ESCALA[i], k * 0.12, 0.7, 0.06));
       soplo(c, 0.55, 0.9, 3000, 7000, 0.015);
+      break;
+    case "latido":
+      marimba(c, 98, 0, 0.18, 0.09);
+      marimba(c, 82.41, 0.2, 0.22, 0.08);
+      break;
+    case "burbuja":
+      marimba(c, ESCALA[n + 2] * 2, 0, 0.08, 0.03);
+      soplo(c, 0, 0.09, 2000, 5000, 0.02);
       break;
     case "cierre":
       [4, 2, 1, 0].forEach((i, k) => marimba(c, ESCALA[i] / 2, k * 0.5, 1.2, 0.045));

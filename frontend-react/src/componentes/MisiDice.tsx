@@ -1,23 +1,29 @@
+import type { IdPersonaje } from "../datos/personajes";
 import type { ColorPelaje } from "../tipos";
 import Icono from "./Icono";
-import Misi, { type AnimoMisi } from "./Misi";
+import { type AnimoMisi } from "./Misi";
+import Personaje from "./Personaje";
 
 interface MisiDiceProps {
   mensaje: string;
   pelaje?: ColorPelaje;
+  /** Compañero del niño; sin valor, Misi. */
+  personaje?: IdPersonaje;
+  /** Pelaje del compañero (si no es Misi). */
+  variante?: string;
   animo?: AnimoMisi;
   onEscuchar?: () => void;
   tamano?: number;
   oscuro?: boolean;
 }
 
-/** Capitán Misi con su globo de diálogo. El texto siempre se ve en pantalla. */
-export default function MisiDice({ mensaje, pelaje, animo = "feliz", onEscuchar, tamano = 96, oscuro = true }: MisiDiceProps) {
+/** El compañero del niño (Capitán Misi por defecto) con su globo de diálogo. El texto siempre se ve en pantalla. */
+export default function MisiDice({ mensaje, pelaje, personaje, variante, animo = "feliz", onEscuchar, tamano = 96, oscuro = true }: MisiDiceProps) {
   return (
     <div className="flex w-full max-w-2xl items-center gap-3 sm:gap-4">
       <div className="misi-viaja shrink-0">
         <div className={animo === "habla" ? "misi-hablando" : "animate-flotar"}>
-          <Misi pelaje={pelaje} animo={animo} tamano={tamano} />
+          <Personaje personaje={personaje} pelaje={pelaje} variante={variante} animo={animo} tamano={tamano} />
         </div>
       </div>
       <div

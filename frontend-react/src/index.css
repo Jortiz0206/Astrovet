@@ -151,6 +151,13 @@
   --borde-bloque: #cdeedb;
   --borde-bloque-sombra: #9fd3b6;
 }
+.juego[data-mundo="4"] {
+  --cielo: #0c2340;
+  --brillo-1: #2d7fae;
+  --brillo-2: #4e5fb6;
+  --borde-bloque: #d6eefb;
+  --borde-bloque-sombra: #a3cfe8;
+}
 .juego[data-mundo="descanso"] {
   --cielo: #120f2a;
   --brillo-1: #2b2556;
@@ -1762,3 +1769,351 @@
   transform: none;
   pointer-events: auto;
 }
+
+/* Cada capa (mueble u objeto) ocupa un lienzo mucho más grande que su
+   baldosa: la caja no recibe toques, solo lo que está pintado. */
+.capa-casa {
+  pointer-events: none;
+}
+.baldosa-destino {
+  fill: rgb(143 217 182 / 0.75);
+  stroke: #3f9e73;
+  stroke-width: 3;
+}
+.baldosa-no-cabe {
+  fill: rgb(229 140 134 / 0.6);
+  stroke: #c25b55;
+  stroke-width: 3;
+}
+.mueble-arrastrado {
+  opacity: 0.8;
+}
+.mueble-arrastrado svg {
+  filter: drop-shadow(0 12px 10px rgb(43 36 64 / 0.35));
+  animation: none;
+}
+.casa-decorando .mueble-editable svg * {
+  cursor: grab;
+}
+
+/* Personaje sin desbloquear: silueta apagada, se reconoce pero no está puesto. */
+.personaje-bloqueado {
+  filter: grayscale(0.55) brightness(0.85);
+  opacity: 0.8;
+}
+
+/* ---------- Clínica ---------- */
+
+.ficha-paciente {
+  transition: transform 160ms var(--ease-llegada), background-color 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ficha-paciente:hover {
+    background: rgb(255 255 255 / 0.14);
+  }
+}
+.ficha-paciente:active {
+  transform: scale(0.97);
+}
+.malestar-chip {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-rosa-oscuro);
+  box-shadow: 0 0 0 3px var(--color-tinta);
+}
+.sello-mini {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--color-rosa);
+  box-shadow: inset 0 0 0 2px #fff;
+}
+.camilla {
+  background: radial-gradient(circle at 50% 70%, #fff 0%, var(--color-celeste) 70%);
+  box-shadow: inset 0 -14px 0 var(--color-celeste-oscuro), 0 18px 40px -18px rgb(10 6 30 / 0.7);
+}
+.camilla-lista {
+  background: radial-gradient(circle at 50% 70%, #fff 0%, var(--color-menta-claro) 70%);
+  box-shadow: inset 0 -14px 0 var(--color-menta), 0 18px 40px -18px rgb(10 6 30 / 0.7);
+}
+.paciente-feliz {
+  display: inline-block;
+  animation: paciente-salta 0.7s var(--ease-llegada) 3;
+  transform-origin: bottom center;
+}
+@keyframes paciente-salta {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-22px) scale(1.04, 0.97); }
+  70% { transform: translateY(0) scale(1.05, 0.94); }
+}
+.estornudo,
+.mancha {
+  transition: opacity 0.5s ease;
+}
+.globo-pensar {
+  position: absolute;
+  top: -18px;
+  right: -26px;
+  display: grid;
+  place-items: center;
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--color-tinta), 0 10px 22px -10px rgb(10 6 30 / 0.6);
+  animation: llegar-bloque 500ms var(--ease-llegada) both;
+}
+.globo-pensar::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--color-tinta);
+}
+.paso-cuidado {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  color: rgb(255 255 255 / 0.35);
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.2);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.paso-hecho {
+  background: var(--color-rosa);
+  color: var(--color-tinta);
+  animation: celebrar 0.5s var(--ease-llegada);
+}
+.estetoscopio {
+  background: #fff;
+  color: var(--color-tinta);
+  box-shadow: 0 0 0 3px var(--color-lavanda-claro), 0 12px 24px -12px rgb(10 6 30 / 0.6);
+}
+.frasco {
+  width: 6.5rem;
+  height: 9rem;
+  transition: transform 160ms var(--ease-llegada), opacity 200ms ease;
+}
+@media (min-width: 640px) {
+  .frasco {
+    width: 7.5rem;
+    height: 10.5rem;
+  }
+}
+.frasco:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.frasco-brilla svg {
+  filter: drop-shadow(0 0 12px rgb(255 209 102 / 0.95));
+}
+.frasco-descartado {
+  opacity: 0.4;
+}
+.frasco-elegido {
+  animation: frasco-sirve 0.9s var(--ease-llegada);
+}
+@keyframes frasco-sirve {
+  50% { transform: rotate(-22deg) translateY(-10px); }
+}
+.plato {
+  background: radial-gradient(circle, #fff 0 55%, var(--color-lavanda-tenue) 56% 100%);
+  box-shadow: 0 0 0 4px var(--color-tinta), 0 14px 26px -14px rgb(10 6 30 / 0.7);
+  transition: transform 160ms var(--ease-llegada), opacity 200ms ease;
+}
+.plato:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.plato-brilla {
+  box-shadow: 0 0 0 4px var(--color-tinta), 0 0 0 10px rgb(255 209 102 / 0.8);
+}
+.plato-descartado {
+  opacity: 0.4;
+}
+.plato-elegido {
+  background: radial-gradient(circle, #fff 0 55%, var(--color-menta-claro) 56% 100%);
+}
+.burbuja-bano {
+  background: radial-gradient(circle at 32% 28%, #fff 0 12%, rgb(232 240 254 / 0.95) 13% 55%, rgb(159 211 242 / 0.85) 100%);
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.9), 0 0 0 3px rgb(43 36 64 / 0.6);
+  animation:
+    llegar-bloque 500ms var(--ease-llegada) both,
+    burbuja-flota 3.2s ease-in-out infinite;
+}
+.burbuja-brilla {
+  box-shadow: inset 0 0 0 3px #fff, 0 0 0 5px var(--color-dorado), 0 0 22px var(--color-dorado);
+}
+.burbuja-revienta {
+  animation: burbuja-pop 0.45s ease-out forwards;
+}
+@keyframes burbuja-flota {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+@keyframes burbuja-pop {
+  60% { transform: scale(1.25); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+.sello-grande {
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 999px;
+  background: var(--color-rosa);
+  color: var(--color-tinta);
+  box-shadow: 0 0 0 5px #fff, 0 0 0 9px var(--color-rosa-oscuro);
+  animation: sello-cae 0.6s var(--ease-llegada) both;
+}
+@keyframes sello-cae {
+  from { transform: scale(2) rotate(-20deg); opacity: 0; }
+  to { transform: scale(1) rotate(-8deg); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .paciente-feliz,
+  .burbuja-bano,
+  .frasco-elegido,
+  .sello-grande,
+  .paso-hecho {
+    animation: none;
+  }
+}
+.sin-movimiento .paciente-feliz,
+.sin-movimiento .burbuja-bano,
+.sin-movimiento .frasco-elegido,
+.sin-movimiento .sello-grande {
+  animation: none;
+}
+
+/* Rescate del Cometa Cristal: el hielo se raja y los trozos se apartan. */
+.rescate-modo-cristal .rescate-animal {
+  animation: salir-niebla 1s var(--ease-llegada) 0.7s both;
+}
+.rescate-cristal {
+  z-index: 2;
+  filter: drop-shadow(0 0 14px rgb(159 211 242 / 0.7));
+}
+.rescate-trozo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trozo-sale 1.1s var(--ease-llegada) 0.55s both;
+}
+.rescate-nucleo {
+  animation: desvanecer 0.5s ease 0.5s forwards;
+}
+.rescate-grieta {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: grieta 0.5s ease-out 0.05s forwards, desvanecer 0.3s ease 0.55s forwards;
+}
+@keyframes trozo-sale {
+  to { transform: translate(var(--dx), var(--dy)) rotate(var(--giro)) scale(0.6); opacity: 0; }
+}
+@keyframes grieta {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes desvanecer {
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rescate-trozo { animation: desvanecer 0.6s ease 0.4s both; }
+}
+.sin-movimiento .rescate-trozo { animation: desvanecer 0.6s ease 0.4s both; }
+
+/* ---------- Ambiente de los cuartos ---------- */
+.ambiente-luciernaga {
+  filter: drop-shadow(0 0 4px #ffd166);
+  animation: luciernaga 3.6s ease-in-out infinite;
+}
+@keyframes luciernaga {
+  0%, 100% { opacity: 0.35; translate: 0 0; }
+  50% { opacity: 1; translate: 3px -6px; }
+}
+.ambiente-luz {
+  animation: luz-base 2.4s ease-in-out infinite;
+}
+@keyframes luz-base {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambiente-luciernaga,
+  .ambiente-luz {
+    animation: none;
+  }
+}
+.sin-movimiento .ambiente-luciernaga,
+.sin-movimiento .ambiente-luz {
+  animation: none;
+}
+
+/* Clínica: la línea de latido late despacio. */
+.ambiente-latido {
+  stroke-dasharray: 18 6;
+  animation: latido-linea 2.4s linear infinite;
+}
+@keyframes latido-linea {
+  to { stroke-dashoffset: -48; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambiente-latido { animation: none; }
+}
+.sin-movimiento .ambiente-latido { animation: none; }
+
+/* Pacientes en el cuarto de la clínica */
+.capa-paciente {
+  transition: left 0.9s var(--ease-mover), top 0.9s var(--ease-mover);
+}
+.paciente-casa {
+  position: relative;
+  display: block;
+  width: 120px;
+  height: 170px;
+  pointer-events: none;
+}
+.paciente-casa .paciente-cuerpo {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  translate: -50% 0;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.paciente-casa .malestar-chip {
+  top: auto;
+  right: auto;
+  left: 50%;
+  bottom: 96px;
+  translate: -50% 0;
+  pointer-events: none;
+  animation: marca-salta 1.8s var(--ease-mover) infinite;
+}
+.paciente-sombra {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 52px;
+  height: 16px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: rgb(43 36 64 / 0.2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .capa-paciente { transition: none; }
+  .paciente-casa .malestar-chip { animation: none; }
+}
+.sin-movimiento .capa-paciente { transition: none; }
+.sin-movimiento .paciente-casa .malestar-chip { animation: none; }
+

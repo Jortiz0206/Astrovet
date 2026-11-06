@@ -4,6 +4,7 @@
 
 import { MUEBLES, obtenerMueble, regaloDeMision, type Mueble } from "../datos/casa";
 import { MISIONES, obtenerMision } from "../datos/contenido";
+import { obtenerPersonaje, PELAJES, PERSONAJES, type IdPersonaje } from "../datos/personajes";
 import type {
   ColorPelaje,
   EstadoMision,
@@ -11,6 +12,7 @@ import type {
   Intento,
   Jugador,
   AjusteCuarto,
+  Cuidado,
   Mision,
   MuebleJugador,
   Rol,
@@ -219,6 +221,9 @@ export async function eliminarJugador(id: string): Promise<void> {
     bd.sesiones = bd.sesiones.filter((s) => s.idJugador !== id);
     bd.intentos = bd.intentos.filter((i) => !sesiones.has(i.idSesion));
     bd.movimientos = bd.movimientos.filter((m) => m.idJugador !== id);
+    bd.muebles = bd.muebles.filter((m) => m.idJugador !== id);
+    bd.cuartos = bd.cuartos.filter((c) => c.idJugador !== id);
+    bd.cuidados = bd.cuidados.filter((c) => c.idJugador !== id);
   });
 }
 
@@ -394,6 +399,76 @@ export async function cambiarPelaje(idJugador: string, pelaje: ColorPelaje): Pro
   return actualizarJugador(idJugador, { pelaje });
 }
 
+// ======================= Personajes =======================
+
+/** Compañeros que el jugador ya puede usar (Misi siempre). */
+export function personajesDe(j: Jugador): IdPersonaje[] {
+  return ["misi", ...(j.personajes ?? []).filter((p) => p !== "misi")];
+}
+
+/** Desbloquea un compañero con patitas (paw_transactions con motivo «personaje») y lo deja puesto. */
+export async function desbloquearPersonaje(idJugador: string, id: IdPersonaje): Promise<Jugador> {
+  await pausa(60);
+  const jugador = jugadorPropio(idJugador);
+  const p = PERSONAJES.find((x) => x.id === id);
+  if (!p) throw new ErrorApi("Ese personaje no existe.");
+  if (personajesDe(jugador).includes(id)) throw new ErrorApi("Ya tienes ese personaje.");
+  if (jugador.patitas < p.precio) throw new ErrorApi("Aún no tienes patitas suficientes.");
+  return transaccion((bd) => {
+    const nuevo: Jugador = {
+      ...jugador,
+      patitas: jugador.patitas - p.precio,
+      personajes: [...(jugador.personajes ?? []), id],
+      personaje: id,
+      actualizadoEn: ahoraIso(),
+    };
+    bd.jugadores = bd.jugadores.map((j) => (j.id === idJugador ? nuevo : j));
+    bd.movimientos.push({ id: nuevoId(), idJugador, cantidad: -p.precio, motivo: "personaje", en: ahoraIso() });
+    return nuevo;
+  });
+}
+
+/** Cambia el pelaje de un compañero (gratis). */
+export async function cambiarPelajePersonaje(idJugador: string, personaje: IdPersonaje, variante: string): Promise<Jugador> {
+  await pausa(30);
+  const jugador = jugadorPropio(idJugador);
+  if (personaje === "misi" || !PELAJES[personaje].some((p) => p.id === variante)) throw new ErrorApi("Ese pelaje no existe.");
+  return transaccion((bd) => {
+    const nuevo: Jugador = { ...jugador, pelajes: { ...jugador.pelajes, [personaje]: variante }, actualizadoEn: ahoraIso() };
+    bd.jugadores = bd.jugadores.map((j) => (j.id === idJugador ? nuevo : j));
+    return nuevo;
+  });
+}
+
+/** Cambia el compañero por otro ya desbloqueado. */
+export async function elegirPersonaje(idJugador: string, id: IdPersonaje): Promise<Jugador> {
+  await pausa(30);
+  const jugador = jugadorPropio(idJugador);
+  if (!personajesDe(jugador).includes(id)) throw new ErrorApi(`Primero desbloquea a ${obtenerPersonaje(id).nombre}.`);
+  return transaccion((bd) => {
+    const nuevo: Jugador = { ...jugador, personaje: id, actualizadoEn: ahoraIso() };
+    bd.jugadores = bd.jugadores.map((j) => (j.id === idJugador ? nuevo : j));
+    return nuevo;
+  });
+}
+
+// ======================= Clínica =======================
+
+/** Ficha de cuidados del jugador: un sello por visita terminada (sin patitas ni progreso). */
+export async function cuidadosDe(idJugador: string): Promise<Cuidado[]> {
+  await pausa(20);
+  jugadorPropio(idJugador);
+  return leer().cuidados.filter((c) => c.idJugador === idJugador);
+}
+
+export async function registrarCuidado(idJugador: string, animal: string, juego: string): Promise<Cuidado> {
+  await pausa(20);
+  jugadorPropio(idJugador);
+  const cuidado: Cuidado = { id: nuevoId(), idJugador, animal, juego, en: ahoraIso() };
+  transaccion((bd) => bd.cuidados.push(cuidado));
+  return cuidado;
+}
+
 // ======================= Seguimiento (vista previa del incremento 3) =======================
 
 export interface ResumenSesion {
@@ -485,7 +560,7 @@ export async function ajustesDe(idJugador: string): Promise<AjusteCuarto[]> {
 export async function guardarAjuste(
   idJugador: string,
   cuarto: string,
-  cambio: { paredes?: [string, string]; piso?: [string, string]; posicion?: { indice: number; c: number; r: number } },
+  cambio: { paredes?: [string, string]; piso?: [string, string]; posicion?: { indice: number; c: number; r: number }; pacientes?: string[] },
 ): Promise<void> {
   await pausa(20);
   jugadorPropio(idJugador);
@@ -497,6 +572,7 @@ export async function guardarAjuste(
     }
     if (cambio.paredes) a.paredes = cambio.paredes;
     if (cambio.piso) a.piso = cambio.piso;
+    if (cambio.pacientes) a.pacientes = cambio.pacientes;
     if (cambio.posicion) a.posiciones[String(cambio.posicion.indice)] = [cambio.posicion.c, cambio.posicion.r];
   });
 }

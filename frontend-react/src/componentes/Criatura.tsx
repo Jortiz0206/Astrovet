@@ -24,7 +24,10 @@ export type ClaveCriatura =
   | "puma"
   | "mula"
   | "oveja"
-  | "perro";
+  | "perro"
+  | "mono"
+  | "dino"
+  | "cabra";
 
 const T = "#2B2440";
 const SW = 3.5;
@@ -190,16 +193,17 @@ function Pato() {
   );
 }
 
-function Mona() {
+function Mona({ pelo = "#A0704F", copete = false }: { pelo?: string; copete?: boolean }) {
   return (
     <>
-      <circle cx="24" cy="60" r="13" fill="#A0704F" {...P} />
-      <circle cx="96" cy="60" r="13" fill="#A0704F" {...P} />
+      <circle cx="24" cy="60" r="13" fill={pelo} {...P} />
+      <circle cx="96" cy="60" r="13" fill={pelo} {...P} />
       <circle cx="24" cy="60" r="6.5" fill="#F1D3B3" />
       <circle cx="96" cy="60" r="6.5" fill="#F1D3B3" />
-      <circle cx="60" cy="60" r="36" fill="#A0704F" {...P} />
+      <circle cx="60" cy="60" r="36" fill={pelo} {...P} />
+      {copete ? <path d="M50 26 C48 14 56 10 60 18 C62 8 72 10 70 24" fill={pelo} {...P} /> : null}
       <path d="M60 46 C50 34 32 40 34 56 C35 70 44 88 60 90 C76 88 85 70 86 56 C88 40 70 34 60 46 Z" fill="#F1D3B3" {...P} />
-      <path d="M52 22 q8 -10 14 2" fill="none" {...P} />
+      {copete ? null : <path d="M52 22 q8 -10 14 2" fill="none" {...P} />}
       <Ojos x1={49} x2={71} y={56} />
       <ellipse cx="56" cy="69" rx="1.8" ry="2.3" fill={T} />
       <ellipse cx="64" cy="69" rx="1.8" ry="2.3" fill={T} />
@@ -368,6 +372,61 @@ function Perro() {
   );
 }
 
+/** Dino, el dinosaurio del cometa: cuello largo, crestas de cristal. */
+function Dino() {
+  // Crestas de cristal: asoman por detrás del lomo y del cuello.
+  const crestas: [number, number, number][] = [
+    [86, 82, 12],
+    [72, 77, 15],
+    [58, 79, 13],
+    [52, 60, 11],
+    [50, 46, 10],
+  ];
+  return (
+    <>
+      <path d="M86 100 C102 98 112 86 112 74 C104 84 96 88 84 88 Z" fill="#7FC8A9" {...P} />
+      {crestas.map(([x, y, h], i) => (
+        <path key={i} d={`M${x - 7} ${y + 4} L${x + 1} ${y - h} L${x + 8} ${y + 4} Z`} fill={i % 2 ? "#BFE3F7" : "#9FD3F2"} {...P} strokeWidth={2.5} />
+      ))}
+      <ellipse cx="66" cy="92" rx="30" ry="18" fill="#7FC8A9" {...P} />
+      <rect x="46" y="98" width="10" height="14" rx="4" fill="#7FC8A9" {...P} />
+      <rect x="74" y="98" width="10" height="14" rx="4" fill="#7FC8A9" {...P} />
+      <path d="M44 86 C38 70 36 52 40 40" fill="none" stroke={T} strokeWidth="21" strokeLinecap="round" />
+      <path d="M44 86 C38 70 36 52 40 40" fill="none" stroke="#7FC8A9" strokeWidth="14" strokeLinecap="round" />
+      <ellipse cx="46" cy="34" rx="24" ry="19" fill="#7FC8A9" {...P} />
+      <ellipse cx="34" cy="40" rx="9" ry="6" fill="#B5E5CF" />
+      <circle cx="29" cy="38" r="1.6" fill={T} />
+      <circle cx="35" cy="38" r="1.6" fill={T} />
+      <Ojos x1={44} x2={58} y={28} r={4.5} />
+      <path d="M30 46 Q38 52 48 46" fill="none" {...P} strokeWidth={2.8} />
+      <circle cx="62" cy="38" r="4.5" fill="#FFB7B2" opacity="0.75" />
+      <ellipse cx="72" cy="88" rx="8" ry="5" fill="#B5E5CF" />
+    </>
+  );
+}
+
+/** Kira, la cabra: cuernos curvos y barbita. */
+function Cabra() {
+  return (
+    <>
+      <path d="M44 30 C34 12 18 14 16 28 C24 22 32 26 38 36 Z" fill="#C9A27C" {...P} />
+      <path d="M76 30 C86 12 102 14 104 28 C96 22 88 26 82 36 Z" fill="#C9A27C" {...P} />
+      <ellipse cx="22" cy="54" rx="14" ry="7" fill="#F4ECE0" {...P} transform="rotate(18 22 54)" />
+      <ellipse cx="98" cy="54" rx="14" ry="7" fill="#F4ECE0" {...P} transform="rotate(-18 98 54)" />
+      <ellipse cx="22" cy="54" rx="7" ry="3" fill="#FFB7B2" transform="rotate(18 22 54)" />
+      <ellipse cx="98" cy="54" rx="7" ry="3" fill="#FFB7B2" transform="rotate(-18 98 54)" />
+      <path d="M60 28 C84 28 92 50 88 70 C84 88 74 98 60 98 C46 98 36 88 32 70 C28 50 36 28 60 28 Z" fill="#F4ECE0" {...P} />
+      <path d="M52 32 C56 26 64 26 68 32 C64 36 56 36 52 32 Z" fill="#D9C3A5" />
+      <path d="M54 96 C54 106 58 112 60 114 C62 112 66 106 66 96" fill="#D9C3A5" {...P} />
+      <Ojos x1={48} x2={72} y={56} />
+      <ellipse cx="60" cy="80" rx="13" ry="9" fill="#FFE7E5" {...P} strokeWidth={2.5} />
+      <ellipse cx="56" cy="78" rx="1.8" ry="2.3" fill={T} />
+      <ellipse cx="64" cy="78" rx="1.8" ry="2.3" fill={T} />
+      <Mejillas x1={38} x2={82} y={70} r={5} />
+    </>
+  );
+}
+
 const DIBUJOS: Record<ClaveCriatura, (id: string) => ReactNode> = {
   abeja: (id) => <Abeja id={id} />,
   elefante: () => <Elefante />,
@@ -388,6 +447,9 @@ const DIBUJOS: Record<ClaveCriatura, (id: string) => ReactNode> = {
   mula: () => <Burra color="#9A7351" hocico="#F1D3B3" />,
   oveja: () => <Oveja />,
   perro: () => <Perro />,
+  mono: () => <Mona pelo="#6E4A33" copete />,
+  dino: () => <Dino />,
+  cabra: () => <Cabra />,
 };
 
 interface CriaturaProps {

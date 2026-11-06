@@ -1,4 +1,5 @@
 import type { ClaveCriatura } from "./componentes/Criatura";
+import type { IdPersonaje } from "./datos/personajes";
 
 // Tipos del dominio. Reflejan las tablas del modelo de datos (sección 17)
 // para que la capa simulada se pueda cambiar por la API de FastAPI sin
@@ -40,6 +41,12 @@ export interface Jugador {
   patitas: number; // players.golden_paws
   activo: boolean;
   pelaje: ColorPelaje; // avatar_config.fur_color
+  /** Compañero elegido (avatar_config.character). Sin valor: Misi. */
+  personaje?: IdPersonaje;
+  /** Compañeros desbloqueados con patitas (player_items de tipo personaje). Misi siempre está. */
+  personajes?: IdPersonaje[];
+  /** Pelaje elegido para cada compañero que no es Misi (Misi usa `pelaje`). */
+  pelajes?: Partial<Record<IdPersonaje, string>>;
   creadoEn: string;
   actualizadoEn: string;
 }
@@ -92,7 +99,7 @@ export interface MovimientoPatitas {
   idSesion?: string;
   idMision?: string;
   cantidad: number;
-  motivo: "mision" | "compra";
+  motivo: "mision" | "compra" | "personaje";
   en: string;
 }
 
@@ -108,6 +115,17 @@ export interface MuebleJugador {
   en: string;
 }
 
+// Visitas terminadas en la clínica (ficha de cuidados): un sello por visita.
+export interface Cuidado {
+  id: string;
+  idJugador: string;
+  /** Animal atendido (nombre, porque un animal puede salir en varias misiones). */
+  animal: string;
+  /** Juego de cuidado: CL-01 … CL-05. */
+  juego: string;
+  en: string;
+}
+
 // Cómo decoró el niño cada cuarto: colores y posición de los objetos de misión.
 export interface AjusteCuarto {
   idJugador: string;
@@ -116,6 +134,8 @@ export interface AjusteCuarto {
   piso?: [string, string];
   /** Índice del objeto de misión → baldosa elegida. */
   posiciones: Record<string, [number, number]>;
+  /** Clínica: animales que están en el cuarto (los demás descansan en «Camas»). */
+  pacientes?: string[];
 }
 
 // ---------- Contenido de aprendizaje ----------
@@ -197,7 +217,7 @@ export interface Mision {
 }
 
 /** Cómo se revela el animal al rescatarlo, según la historia del mundo. */
-export type Revelado = "nube" | "crater" | "lianas";
+export type Revelado = "nube" | "crater" | "lianas" | "cristal";
 
 export interface Mundo {
   id: number;

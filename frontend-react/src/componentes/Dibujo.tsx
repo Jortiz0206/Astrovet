@@ -19,6 +19,7 @@ const ANIMALES: Record<string, ClaveCriatura> = {
   LEÓN: "leon",
   MULA: "mula",
   PUMA: "puma",
+  MONO: "mono",
 };
 
 function Cara({ pelo, extra, piel = "#F1C9A5" }: { pelo: ReactNode; extra?: ReactNode; piel?: string }) {
@@ -39,6 +40,98 @@ function Cara({ pelo, extra, piel = "#F1C9A5" }: { pelo: ReactNode; extra?: Reac
 }
 
 const OBJETOS: Record<string, ReactNode> = {
+  // ---------- Mundo 4: Cometa Cristal (T, N, D) ----------
+  TOMATE: (
+    <>
+      <circle cx="60" cy="66" r="40" fill="#F26B5B" {...P} />
+      <path d="M38 50 C42 42 50 38 56 38" fill="none" stroke="#FFB7B2" strokeWidth="5" strokeLinecap="round" />
+      <path d="M60 28 L52 18 L62 22 L68 12 L70 24 L82 22 L72 32 L76 40 L64 34 L56 42 Z" fill="#6FBF8E" {...P} strokeWidth={3} />
+      <path d="M60 28 V20" {...P} />
+    </>
+  ),
+  TAPA: (
+    <>
+      <ellipse cx="60" cy="74" rx="48" ry="18" fill="#8E7CC3" {...P} />
+      <path d="M12 74 C12 52 34 40 60 40 C86 40 108 52 108 74" fill="#B9A8E6" {...P} />
+      <path d="M30 60 C38 52 48 48 58 48" fill="none" stroke="#E4DCF8" strokeWidth="5" strokeLinecap="round" />
+      <rect x="48" y="22" width="24" height="18" rx="9" fill="#FFD166" {...P} />
+    </>
+  ),
+  MOTO: (
+    <>
+      <circle cx="28" cy="84" r="18" fill="#fff" {...P} />
+      <circle cx="92" cy="84" r="18" fill="#fff" {...P} />
+      <circle cx="28" cy="84" r="6" fill="#5F5878" />
+      <circle cx="92" cy="84" r="6" fill="#5F5878" />
+      <path d="M28 84 L50 60 H76 L92 84" fill="none" {...P} strokeWidth={5} />
+      <path d="M44 62 C46 50 58 46 72 50 L80 62 Z" fill="#F26B5B" {...P} />
+      <path d="M78 54 L88 40 H98" fill="none" {...P} strokeWidth={4.5} />
+      <ellipse cx="56" cy="50" rx="12" ry="5" fill="#2B2440" />
+    </>
+  ),
+  MANO: (
+    <>
+      <path d="M38 104 C30 92 26 76 26 64 C26 58 34 56 38 62 L42 70 V30 C42 22 54 22 54 30 V58 V24 C54 16 66 16 66 24 V58 V28 C66 20 78 20 78 28 V60 V38 C78 30 90 30 90 38 V74 C90 92 82 104 70 104 Z" fill="#F1C9A5" {...P} />
+      <path d="M54 58 V48 M66 58 V46 M78 60 V50" stroke="#D9A47A" strokeWidth="2.5" strokeLinecap="round" />
+    </>
+  ),
+  NIDO: (
+    <>
+      <ellipse cx="44" cy="52" rx="12" ry="14" fill="#E8F0FE" {...P} strokeWidth={3} />
+      <ellipse cx="62" cy="48" rx="12" ry="14" fill="#FFF3D1" {...P} strokeWidth={3} />
+      <ellipse cx="78" cy="54" rx="11" ry="13" fill="#E8F0FE" {...P} strokeWidth={3} />
+      <path d="M14 60 C20 94 40 104 60 104 C80 104 100 94 106 60 C88 70 32 70 14 60 Z" fill="#C9A27C" {...P} />
+      <path d="M22 72 C40 82 80 82 98 72 M30 88 C48 94 72 94 90 88" fill="none" stroke="#8D6748" strokeWidth="3" strokeLinecap="round" />
+      <path d="M18 64 L8 58 M102 64 L112 56" {...P} strokeWidth={3} />
+    </>
+  ),
+  DADO: (
+    <>
+      <path d="M60 14 L102 34 L60 54 L18 34 Z" fill="#fff" {...P} />
+      <path d="M18 34 L60 54 V104 L18 84 Z" fill="#E4DCF8" {...P} />
+      <path d="M102 34 L60 54 V104 L102 84 Z" fill="#C9BEF0" {...P} />
+      <ellipse cx="60" cy="34" rx="5" ry="3" fill="#2B2440" />
+      <circle cx="32" cy="56" r="4" fill="#2B2440" />
+      <circle cx="46" cy="82" r="4" fill="#2B2440" />
+      <circle cx="74" cy="64" r="4" fill="#2B2440" />
+      <circle cx="88" cy="58" r="4" fill="#2B2440" />
+      <circle cx="74" cy="86" r="4" fill="#2B2440" />
+      <circle cx="88" cy="80" r="4" fill="#2B2440" />
+    </>
+  ),
+  DEDO: (
+    <>
+      <path d="M44 108 V44 C44 30 50 22 60 22 C70 22 76 30 76 44 V108 Z" fill="#F1C9A5" {...P} />
+      <path d="M50 46 C50 34 54 30 60 30 C66 30 70 34 70 46 C70 52 66 54 60 54 C54 54 50 52 50 46 Z" fill="#FFE7E5" {...P} strokeWidth={2.5} />
+      <path d="M50 74 Q60 78 70 74 M50 90 Q60 94 70 90" fill="none" stroke="#D9A47A" strokeWidth="2.5" strokeLinecap="round" />
+    </>
+  ),
+  DONA: (
+    <>
+      <circle cx="60" cy="62" r="44" fill="#E0A86A" {...P} />
+      <path d="M22 54 C26 30 46 20 60 20 C82 20 100 34 100 58 C96 70 86 66 80 72 C72 80 62 70 52 76 C40 82 34 70 26 70 Z" fill="#FFB7B2" {...P} />
+      <circle cx="60" cy="60" r="14" fill="#231d45" {...P} />
+      {[
+        [40, 38, 20],
+        [76, 36, -30],
+        [86, 54, 60],
+        [36, 58, -50],
+        [62, 32, 90],
+      ].map(([x, y, a], i) => (
+        <rect key={i} x={x - 5} y={y - 1.8} width="10" height="3.6" rx="1.8" fill={["#8FD9B6", "#FFD166", "#9FD3F2", "#8E7CC3", "#fff"][i]} transform={`rotate(${a} ${x} ${y})`} />
+      ))}
+    </>
+  ),
+  MALETA: (
+    <>
+      <path d="M44 34 V24 C44 18 48 16 52 16 H68 C72 16 76 18 76 24 V34" fill="none" {...P} strokeWidth={5} />
+      <rect x="14" y="34" width="92" height="66" rx="12" fill="#8FD9B6" {...P} />
+      <path d="M14 58 H106" {...P} strokeWidth={3} />
+      <rect x="52" y="52" width="16" height="12" rx="3" fill="#FFD166" {...P} strokeWidth={2.5} />
+      <path d="M34 34 V100 M86 34 V100" stroke="#3F9E73" strokeWidth="4" />
+      <circle cx="30" cy="80" r="7" fill="#FFB7B2" {...P} strokeWidth={2} />
+    </>
+  ),
   AVIÓN: (
     <>
       <path d="M14 66 C14 58 22 54 32 54 H92 C104 54 110 60 110 64 C110 68 104 72 92 72 H32 C22 72 14 70 14 66 Z" fill="#fff" {...P} />

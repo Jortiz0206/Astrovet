@@ -41,7 +41,7 @@ llegar a Luna Mágica y Selva Cósmica sin jugar todo) y **probar el cierre suav
 | Sin castigo: 1-2 errores retroalimentación (qué eligió y qué se busca), 3-4 pista visual, 5+ Misi ayuda | Listo |
 | Rescate animado por mundo y patitas solo la primera vez (RN-08) | Listo |
 | Estación de vocales (ESP-02) y cierre suave con «Estrellas de hoy» (ESP-04) | Listo |
-| Vestidor (pelaje) · Clínica (sala de rescatados) | Parcial: tienda y juegos de cuidado pendientes |
+| Vestidor (personajes y pelaje) · Clínica (5 juegos de cuidado) | Hecho; trajes y juegos de cuidado de fase 2 pendientes |
 | Espacio docente | Pantalla de bienvenida (módulo: incremento 4) |
 
 ## Arte, sonido y voz

@@ -352,7 +352,7 @@ function Mision() {
           <h1 className="text-balance text-3xl font-black text-white sm:text-4xl">{mision.titulo}</h1>
           <p className="font-bold text-white/75">{practica ? "Práctica libre" : `${mundo?.nombre} · ${mision.contenido}`}</p>
         </div>
-        <MisiDice mensaje={mensajeIntro} pelaje={jugador.pelaje} onEscuchar={() => hablar(mensajeIntro)} />
+        <MisiDice mensaje={mensajeIntro} pelaje={jugador.pelaje} personaje={jugador.personaje} variante={jugador.pelajes?.[jugador.personaje ?? "misi"]} onEscuchar={() => hablar(mensajeIntro)} />
         {error ? <p className="rounded-xl bg-rosa-claro px-4 py-2 font-bold text-tinta">{error}</p> : null}
         <div className="flex flex-wrap justify-center gap-3">
           <button type="button" onClick={empezar} className="boton-juego flex min-h-18 items-center gap-3 rounded-full px-10 text-2xl font-black">
@@ -387,7 +387,7 @@ function Mision() {
         <h1 className="rescate-titulo text-balance text-3xl font-black text-white sm:text-4xl">
           {practica ? "¡Práctica terminada!" : `¡${mision.animal.nombre} ${claves.length > 1 ? "están" : "está"} a salvo!`}
         </h1>
-        <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} animo={animo} onEscuchar={() => hablar(mensaje)} />
+        <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} personaje={jugador.personaje} variante={jugador.pelajes?.[jugador.personaje ?? "misi"]} animo={animo} onEscuchar={() => hablar(mensaje)} />
         <div className={`flex flex-wrap justify-center gap-3 transition-opacity duration-300 ${entregado || practica || !resultado?.primeraVez ? "opacity-100" : "opacity-0"}`}>
           {siguienteJugable ? (
             <button type="button" className="boton-juego flex min-h-18 items-center gap-2 rounded-full px-8 text-xl font-black" onClick={() => salirA(`/juego/mision/${siguiente.id}`)}>
@@ -436,7 +436,7 @@ function Mision() {
         </span>
       </div>
 
-      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} animo={animo} onEscuchar={escucharOtraVez} />
+      <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} personaje={jugador.personaje} variante={jugador.pelajes?.[jugador.personaje ?? "misi"]} animo={animo} onEscuchar={escucharOtraVez} />
 
       <AjusteAlto>
         <Componente

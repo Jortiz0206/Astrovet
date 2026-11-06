@@ -261,6 +261,101 @@ const DIBUJOS: Record<TipoSprite, (c: string) => ReactNode> = {
       </>
     );
   },
+  cristal: (c) => {
+    // Racimo de cristales del cometa: prismas de distinto alto que brillan.
+    const prismas: [number, number, number, number][] = [
+      // [desplazamiento en c, desplazamiento en r, alto, ancho]
+      [-0.12, 0.1, 58, 13],
+      [0.16, -0.08, 86, 16],
+      [0.08, 0.24, 40, 11],
+      [-0.26, -0.18, 34, 10],
+    ];
+    const [bx, by] = xy(0, 0, 0);
+    return (
+      <>
+        <ellipse cx={bx} cy={by} rx="30" ry="13" fill={tono(c, -0.35)} opacity="0.35" />
+        <circle cx={bx} cy={by - 50} r="38" fill={c} opacity="0.22" className="sprite-brillo" />
+        {[...prismas]
+          .sort((a, b) => a[0] + a[1] - (b[0] + b[1]))
+          .map(([u, v, h, w], i) => {
+            const [x, y] = xy(u, v, 0);
+            const punta = `${x},${y - h - w}`;
+            return (
+              <g key={i}>
+                <polygon points={`${x - w},${y - 4} ${x},${y + 3} ${x},${y - h + 3} ${x - w},${y - h}`} fill={tono(c, 0.25)} stroke={T} strokeWidth="2.5" strokeLinejoin="round" />
+                <polygon points={`${x},${y + 3} ${x + w},${y - 4} ${x + w},${y - h} ${x},${y - h + 3}`} fill={tono(c, -0.1)} stroke={T} strokeWidth="2.5" strokeLinejoin="round" />
+                <polygon points={`${x - w},${y - h} ${x},${y - h + 3} ${x + w},${y - h} ${punta}`} fill={tono(c, 0.55)} stroke={T} strokeWidth="2.5" strokeLinejoin="round" />
+                <path d={`M${x - w + 4} ${y - 10} V${y - h + 6}`} stroke="#fff" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+              </g>
+            );
+          })}
+      </>
+    );
+  },
+  camilla: (c) => {
+    // Camilla de la clínica: marco metálico, colchoneta y almohada.
+    const patas: [number, number][] = [
+      [-0.38, -0.2],
+      [0.38, -0.2],
+      [-0.38, 0.2],
+      [0.38, 0.2],
+    ];
+    return (
+      <>
+        {patas.map(([u, v], i) => (
+          <Caja key={i} a={0.06} b={0.06} h={22} du={u} dv={v} color="#BDB9CC" trazo={2} />
+        ))}
+        <Caja a={0.92} b={0.54} h={6} z={22} color="#DDD5F3" />
+        <Caja a={0.86} b={0.48} h={9} z={28} color={c} />
+        <Caja a={0.2} b={0.38} h={7} z={37} du={-0.3} color="#FFFFFF" />
+      </>
+    );
+  },
+  botiquin: (c) => {
+    // Botiquín alto con la cruz rosada al frente.
+    const [x1, y1] = xy(0.23, -0.17, 62);
+    const [x2, y2] = xy(0.23, 0.17, 62);
+    const [x3, y3] = xy(0.23, 0, 48);
+    const [x4, y4] = xy(0.23, 0, 76);
+    return (
+      <>
+        <Caja a={0.46} b={0.8} h={96} color={c} />
+        <path d={`M${x1} ${y1} L${x2} ${y2} M${x3} ${y3} L${x4} ${y4}`} stroke="#E58C86" strokeWidth="8" strokeLinecap="round" />
+        {[30, 90].map((z) => {
+          const [a1, b1] = xy(0.23, -0.36, z);
+          const [a2, b2] = xy(0.23, 0.36, z);
+          return <path key={z} d={`M${a1} ${b1} L${a2} ${b2}`} stroke={T} strokeOpacity="0.25" strokeWidth="2" />;
+        })}
+      </>
+    );
+  },
+  banera: (c) => {
+    // Bañera con agua y burbujas que suben.
+    const [bx, by] = xy(0, 0, 30);
+    return (
+      <>
+        {[
+          [-0.36, -0.2],
+          [0.36, 0.2],
+          [0.36, -0.2],
+          [-0.36, 0.2],
+        ].map(([u, v], i) => (
+          <Caja key={i} a={0.08} b={0.08} h={6} du={u} dv={v} color="#FFD166" trazo={2} />
+        ))}
+        <Caja a={0.94} b={0.6} h={26} z={6} color="#FFFFFF" />
+        <Caja a={0.78} b={0.44} h={2} z={28} color={c} trazo={1.5} />
+        {[
+          [-22, -6, 9],
+          [-4, -14, 12],
+          [16, -8, 8],
+          [6, -26, 6],
+          [-14, -30, 5],
+        ].map(([dx, dy, r], i) => (
+          <circle key={i} cx={bx + dx} cy={by + dy} r={r} fill="#FFFFFF" fillOpacity="0.9" stroke="#9FD3F2" strokeWidth="2" className={i % 2 ? "sprite-brillo" : undefined} />
+        ))}
+      </>
+    );
+  },
   caja: (c) => (
     <>
       <Caja a={0.55} b={0.55} h={18} color={c} />

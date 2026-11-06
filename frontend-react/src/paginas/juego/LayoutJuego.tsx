@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
+import { PersonajeDe } from "../../componentes/Personaje";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Icono from "../../componentes/Icono";
-import Misi from "../../componentes/Misi";
 import { BotonMantener } from "../../componentes/ui";
 import { useJuego } from "../../contexto/Juego";
 import { GUION } from "../../datos/guion";
@@ -44,7 +44,7 @@ export default function LayoutJuego() {
       {!enDescanso && (
         <header className="flex items-center gap-2 px-3 pt-3 sm:gap-3 sm:px-5">
           <Link to="/juego" viewTransition className="flex min-h-12 items-center gap-2 rounded-full bg-white/10 py-1 pl-1 pr-1 min-[431px]:pr-4 ring-1 ring-white/15 transition-colors hover:bg-white/15">
-            <Misi pelaje={jugador.pelaje} tamano={40} titulo="Ir a mi casa" />
+            <PersonajeDe jugador={jugador} tamano={40} titulo="Ir a mi casa" />
             <span className="max-w-28 truncate font-extrabold max-[430px]:hidden sm:max-w-none">{jugador.apodo}</span>
           </Link>
           <span id="contador-patitas" className="contador-patitas flex min-h-12 shrink-0 items-center gap-1.5 rounded-full px-4 font-black whitespace-nowrap text-tinta tabular-nums" aria-label={`${jugador.patitas} patitas doradas`}>
