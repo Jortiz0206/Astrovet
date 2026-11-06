@@ -15,14 +15,14 @@ export default function Clinica() {
   const rescatados = MISIONES.filter((m) => estados[m.id] === "completado");
   const mensaje = rescatados.length
     ? "Tus animales están en la sala de espera. Muy pronto podrás cuidarlos aquí."
-    : "Todavía no hay animales en la clínica. ¡Ve al mapa y rescata al primero!";
+    : "Todavía no hay animales en la clínica. ¡Ve a tu casa y rescata al primero!";
 
   return (
     <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center gap-6 px-4 py-6">
       <div className="flex w-full items-center">
         <Link to="/juego" viewTransition className="flex min-h-12 items-center gap-2 rounded-full bg-white/10 px-4 font-bold ring-1 ring-white/15 hover:bg-white/20">
           <Icono nombre="flecha-izq" tamano={20} />
-          Centro espacial
+          Mi casa
         </Link>
       </div>
       <h1 className="flex items-center gap-3 text-3xl font-black sm:text-4xl">
@@ -43,9 +43,9 @@ export default function Clinica() {
           ))}
         </ul>
       ) : (
-        <Link to="/juego/mapa" viewTransition className="boton-juego flex min-h-16 items-center gap-2 rounded-full px-8 text-xl font-black">
-          <Icono nombre="mapa" tamano={24} />
-          Ir al mapa
+        <Link to="/juego" viewTransition className="boton-juego flex min-h-16 items-center gap-2 rounded-full px-8 text-xl font-black">
+          <Icono nombre="casa" tamano={24} />
+          Ir a mi casa
         </Link>
       )}
     </section>

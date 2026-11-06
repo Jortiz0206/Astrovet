@@ -29,12 +29,15 @@ llegar a Luna Mágica y Selva Cósmica sin jugar todo) y **probar el cierre suav
 | Landing jugable: mini misión «Ada se perdió en la niebla» (3 juegos) y registro en la misma página | Listo |
 | Registro (familia/docente), ingreso, recuperación (simulada) | Listo |
 | Espacio del tutor: perfiles, progreso por mundo, actividad reciente, voz de Misi | Listo |
-| Mapa con los 3 mundos del MVP: ruta, estados y desbloqueo en orden (RN-06) | Listo |
+| 3 mundos con desbloqueo en orden (RN-06); el mapa quedó reemplazado por «Mi casa» | Listo |
 | Planeta Nebulosa: 7 misiones (vocales) | Listo |
 | Luna Mágica: 10 misiones (M, P, S, L y sus sílabas) | Listo |
 | Selva Cósmica: 6 misiones (primeras palabras) | Listo |
 | 17 juegos: los 11 del MVP más globos, piedras del río, clasificar en planetas, trazar la letra, eco de Misi y regalo para el animal | Listo |
 | Cada misión abre con un juego distinto al de la anterior; los juegos se repiten cada 4 o 5 misiones | Listo |
+| 6 juegos más: rompecabezas, arma la figura, resortera, pesca, carrera del cohete y cocina (23 en total) | Listo |
+| «Mi casa» isométrica como inicio: la sala lleva a un cuarto por mundo; cada objeto con estrella es una misión | Listo |
+| Decorar: muebles (compra o regalo), mover las misiones, colores de paredes y piso por cuarto | Listo |
 | Sin castigo: 1-2 errores retroalimentación (qué eligió y qué se busca), 3-4 pista visual, 5+ Misi ayuda | Listo |
 | Rescate animado por mundo y patitas solo la primera vez (RN-08) | Listo |
 | Estación de vocales (ESP-02) y cierre suave con «Estrellas de hoy» (ESP-04) | Listo |

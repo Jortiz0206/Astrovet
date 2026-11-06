@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import type { ClaveCriatura } from "../../componentes/Criatura";
 import { efecto } from "../../servicios/audio";
 import type { Ronda } from "../../tipos";
@@ -17,12 +17,70 @@ export interface PropsActividad {
   onAyuda?: () => void;
   /** El animal de la misión, para los juegos donde participa. */
   animal?: ClaveCriatura[];
+  /** Juegos con varios objetivos en una ronda avisan cuál se busca ahora (para la ayuda). */
+  onObjetivo?: (contenido: string) => void;
+}
+
+/** Quita tildes para comparar sonidos iniciales (AVIÓN empieza con A). */
+export function sinTildes(texto: string): string {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 /** true si el sistema o el botón de calma del juego piden menos movimiento. */
 export function movimientoReducido(): boolean {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.querySelector(".sin-movimiento") !== null;
+}
+
+/** Escala con la que se ve el juego (AjusteAlto); 1 si no se achicó. */
+export function escalaDe(el: Element | null): number {
+  const v = (el?.closest("[data-escala]") as HTMLElement | null)?.dataset.escala;
+  return v ? Number(v) || 1 : 1;
+}
+
+/**
+ * Achica el juego (sin cambiar su diseño) para que quepa en el alto que queda
+ * de pantalla: nada de desplazarse para ver las piezas.
+ */
+export function AjusteAlto({ children, margen = 22 }: { children: ReactNode; margen?: number }) {
+  const caja = useRef<HTMLDivElement>(null);
+  const dentro = useRef<HTMLDivElement>(null);
+  const [medida, setMedida] = useState({ k: 1, alto: 0 });
+
+  useLayoutEffect(() => {
+    const c = caja.current;
+    const d = dentro.current;
+    if (!c || !d) return;
+    const medir = () => {
+      const natural = d.offsetHeight;
+      const ancho = d.scrollWidth;
+      const disponible = window.innerHeight - c.getBoundingClientRect().top - window.scrollY * 0 - margen;
+      const kAlto = natural > 0 ? disponible / natural : 1;
+      const kAncho = ancho > c.clientWidth && ancho > 0 ? c.clientWidth / ancho : 1;
+      const k = Math.floor(Math.max(0.5, Math.min(1, kAlto, kAncho)) * 100) / 100;
+      setMedida((m) => (Math.abs(m.k - k) < 0.01 && m.alto === natural ? m : { k, alto: natural }));
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(d);
+    ro.observe(c);
+    window.addEventListener("resize", medir);
+    // El globo de Misi cambia de alto con cada frase y mueve el juego: se vuelve a medir.
+    const t = window.setInterval(medir, 400);
+    return () => {
+      ro.disconnect();
+      window.clearInterval(t);
+      window.removeEventListener("resize", medir);
+    };
+  }, [margen]);
+
+  return (
+    <div ref={caja} className="flex w-full justify-center" style={{ height: medida.alto ? medida.alto * medida.k : undefined }}>
+      <div ref={dentro} data-escala={medida.k} className="flex w-full shrink-0 justify-center" style={{ transform: medida.k < 1 ? `scale(${medida.k})` : undefined, transformOrigin: "top center", height: "max-content" }}>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 /** Mezcla sin alterar el arreglo original. */
@@ -211,7 +269,8 @@ export function Pieza({
           setLevantada(true);
           efecto("toque");
         }
-        ref.current.style.transform = `translate(${dx}px, ${dy}px) scale(1.08) rotate(${Math.max(-6, Math.min(6, dx / 30))}deg)`;
+        const k = escalaDe(ref.current);
+        ref.current.style.transform = `translate(${dx / k}px, ${dy / k}px) scale(1.08) rotate(${Math.max(-6, Math.min(6, dx / 30))}deg)`;
         marcar(zonaEn(e.clientX, e.clientY));
       }}
       onPointerUp={(e) => {

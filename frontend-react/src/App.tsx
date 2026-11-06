@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { RutaProtegida } from "./contexto/Autenticacion";
 import FormPerfil from "./paginas/adulto/FormPerfil";
 import Ingresar from "./paginas/adulto/Ingresar";
@@ -6,7 +6,7 @@ import PanelDocente from "./paginas/adulto/PanelDocente";
 import PanelTutor from "./paginas/adulto/PanelTutor";
 import Recuperar from "./paginas/adulto/Recuperar";
 import Registro from "./paginas/adulto/Registro";
-import CentroEspacial from "./paginas/juego/CentroEspacial";
+import Casa from "./paginas/juego/Casa";
 import Clinica from "./paginas/juego/Clinica";
 import Descanso from "./paginas/juego/Descanso";
 import LayoutJuego from "./paginas/juego/LayoutJuego";
@@ -36,7 +36,8 @@ export default function App() {
 
       {/* Experiencia del niño: se entra con la sesión del tutor y un perfil elegido */}
       <Route path="/juego" element={<RutaProtegida rol="tutor"><LayoutJuego /></RutaProtegida>}>
-        <Route index element={<CentroEspacial />} />
+        <Route index element={<Casa key="sala" />} />
+        <Route path="casa/:cuarto" element={<CasaPorCuarto />} />
         <Route path="mapa" element={<Mapa />} />
         <Route path="mision/:id" element={<Mision />} />
         <Route path="vestidor" element={<Vestidor />} />
@@ -47,4 +48,10 @@ export default function App() {
       <Route path="*" element={<NoEncontrada />} />
     </Routes>
   );
+}
+
+/** Cada cuarto monta su propia casa: el personaje y el diálogo empiezan de nuevo. */
+function CasaPorCuarto() {
+  const { cuarto } = useParams();
+  return <Casa key={cuarto} />;
 }

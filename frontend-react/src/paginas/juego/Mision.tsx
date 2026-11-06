@@ -6,7 +6,9 @@ import type { AnimoMisi } from "../../componentes/Misi";
 import MisiDice from "../../componentes/MisiDice";
 import { useJuego } from "../../contexto/Juego";
 import { ESTACION_VOCALES, obtenerMision, obtenerMundo } from "../../datos/contenido";
+import { CUARTO_DE_MUNDO } from "../../datos/casa";
 import { CONSIGNAS, GUION, SIN_SONIDO_INICIAL, frase } from "../../datos/guion";
+import { AjusteAlto } from "../../juego/actividades/comunes";
 import { COMPONENTES, audioRonda, nivelDeAyuda, respuestaDicha, retroalimentacion } from "../../juego/actividades";
 import Rescate from "../../juego/Rescate";
 import * as api from "../../servicios/api";
@@ -53,6 +55,11 @@ function Mision() {
   const rachaLimpia = useRef(0);
   const vivo = useRef(true);
   const avisoInactivo = useRef(false);
+  /** Lo que se busca ahora en juegos con varios objetivos por ronda (rompecabezas, figura…). */
+  const objetivoActual = useRef<string | undefined>(undefined);
+  const alObjetivo = useCallback((c: string) => {
+    objetivoActual.current = c;
+  }, []);
 
   // Lo que dice Misi al abrir la misión: se elige una vez y se dice solo.
   const [mensajeIntro] = useState(() => {
@@ -95,7 +102,8 @@ function Mision() {
       const texto = alAzar(GUION.inactivo);
       setMensaje(`${texto} ${CONSIGNAS[act.tipo]}`);
       setAnimo("habla");
-      hablar([texto, ...audioRonda(act, act.rondas[iRonda])], { alTerminar: () => setAnimo("feliz") });
+      const base = audioRonda(act, act.rondas[iRonda]);
+      hablar([texto, ...(objetivoActual.current ? [base[0], { c: objetivoActual.current }] : base)], { alTerminar: () => setAnimo("feliz") });
     }, 2000);
     return () => window.clearInterval(t);
   }, [fase, celebrando, mision, iAct, iRonda]);
@@ -112,6 +120,7 @@ function Mision() {
       huboError.current = false;
       ayudaPedida.current = false;
       avisoInactivo.current = false;
+      objetivoActual.current = undefined;
       repeticiones.current = 0;
       marca.current = Date.now();
       setMensaje(CONSIGNAS[act.tipo]);
@@ -136,9 +145,9 @@ function Mision() {
     void refrescar();
   }, [refrescar]);
 
-  if (!mision || !jugador || !sesion) return <Navigate to="/juego/mapa" replace />;
-  if (mision.actividades.length === 0) return <Navigate to="/juego/mapa" replace />;
-  if (!practica && estado === "bloqueado") return <Navigate to="/juego/mapa" replace />;
+  if (!mision || !jugador || !sesion) return <Navigate to="/juego" replace />;
+  if (mision.actividades.length === 0) return <Navigate to="/juego" replace />;
+  if (!practica && estado === "bloqueado") return <Navigate to="/juego" replace />;
 
   const actividad = mision.actividades[iAct];
   const ronda = actividad.rondas[iRonda];
@@ -200,7 +209,16 @@ function Mision() {
       setAciertos(n);
       if (!terminada) {
         efecto("paso", n);
-        const frases = actividad.tipo === "build_word_syllables" ? GUION.pieza : actividad.tipo === "stepping_stones" ? GUION.cruza : GUION.paso;
+        const PASOS: Partial<Record<string, readonly string[]>> = {
+          build_word_syllables: GUION.pieza,
+          build_figure: GUION.pieza,
+          puzzle: GUION.pieza,
+          stepping_stones: GUION.cruza,
+          fishing: GUION.pesca,
+          cooking: GUION.olla,
+          rocket_race: GUION.carril,
+        };
+        const frases = PASOS[actividad.tipo] ?? GUION.paso;
         setMensaje(alAzar(frases));
         return;
       }
@@ -216,7 +234,9 @@ function Mision() {
             ? GUION.racha
             : actividad.tipo === "feed_animal"
               ? GUION.regalo
-              : GUION.acierto;
+              : actividad.tipo === "slingshot"
+                ? GUION.torre
+                : GUION.acierto;
       const textos: string[] = [alAzar(lista)];
       // A la mitad de la misión, Misi lo cuenta (la niebla del animal ya se aclara).
       const hechas = rondaGlobal + 1;
@@ -243,16 +263,16 @@ function Mision() {
     // 1-2 errores: retroalimentación (qué eligió y qué se busca). 3-4: pista visual. 5+: Misi ayuda.
     if (nivel <= 1) {
       // 1.º error: qué eligió y qué se busca. 2.º: lo mismo, ánimo y el sonido otra vez.
-      const retro = retroalimentacion(actividad, ronda, respuesta);
+      const retro = retroalimentacion(actividad, ronda, respuesta, objetivoActual.current);
       const casi = alAzar(GUION.casi);
       if (n === 1) decir(`${casi} ${retro.texto}`, [], [casi, ...retro.voz]);
       else {
         const animo2 = alAzar(GUION.sigueIntentando);
-        const sonido = audioRonda(actividad, ronda).slice(1);
+        const sonido: Locucion[] = objetivoActual.current ? [{ c: objetivoActual.current }] : audioRonda(actividad, ronda).slice(1);
         decir(`${retro.texto} ${animo2}`, sonido, [...retro.voz, animo2]);
       }
-    } else if (nivel === 2) decir(alAzar(GUION.pista2), [respuestaDicha(actividad, ronda)].filter(() => n === 4));
-    else decir(alAzar(GUION.pista3), [respuestaDicha(actividad, ronda)]);
+    } else if (nivel === 2) decir(alAzar(GUION.pista2), [respuestaDicha(actividad, ronda, objetivoActual.current)].filter(() => n === 4));
+    else decir(alAzar(GUION.pista3), [respuestaDicha(actividad, ronda, objetivoActual.current)]);
   }
 
   function avanzar(a: number, r: number) {
@@ -290,6 +310,7 @@ function Mision() {
       const datos = { animal: mision.animal.nombre, esta: varios ? "están" : "está" };
       const textos = [frase(res.primeraVez ? GUION.rescate : GUION.repaso, datos, alAzar)];
       if (res.primeraVez) textos.push(`Ganaste ${res.patitasGanadas} patitas doradas.`);
+      if (res.regalo) textos.push(`${mision.animal.nombre} te regaló ${res.regalo.nombre.toLowerCase()} para tu casa.`);
       const sigue = res.siguiente && obtenerMundo(res.siguiente.idMundo)?.disponible && res.siguiente.actividades.length > 0;
       if (res.primeraVez && (!res.siguiente || res.siguiente.idMundo !== mision.idMundo)) textos.push(alAzar(GUION.finMundo));
       if (sigue) textos.push(alAzar(GUION.siguiente));
@@ -308,7 +329,7 @@ function Mision() {
 
   const siguiente = resultado?.siguiente;
   const siguienteJugable = siguiente && obtenerMundo(siguiente.idMundo)?.disponible && siguiente.actividades.length > 0;
-  const volverA = practica ? "/juego" : `/juego/mapa?mundo=${mision.idMundo}`;
+  const volverA = practica ? "/juego" : `/juego/casa/${CUARTO_DE_MUNDO[mision.idMundo]}?desde=${mision.id}`;
 
   // ---------- Pantallas ----------
 
@@ -379,8 +400,8 @@ function Mision() {
             className={`${siguienteJugable ? "boton-juego-secundario" : "boton-juego"} flex min-h-18 items-center gap-2 rounded-full px-8 text-xl font-black`}
             onClick={() => salirA(volverA)}
           >
-            <Icono nombre={practica ? "casa" : "mapa"} tamano={24} />
-            {practica ? "Centro espacial" : "Volver al mapa"}
+            <Icono nombre="casa" tamano={24} />
+            Volver a mi casa
           </button>
         </div>
       </section>
@@ -390,7 +411,7 @@ function Mision() {
   const Componente = COMPONENTES[actividad.tipo];
 
   return (
-    <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center gap-5 px-4 pt-3 pb-10">
+    <section className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center gap-4 px-4 pt-3 pb-2">
       <div className="flex w-full items-center gap-3">
         <button
           type="button"
@@ -417,7 +438,7 @@ function Mision() {
 
       <MisiDice mensaje={mensaje} pelaje={jugador.pelaje} animo={animo} onEscuchar={escucharOtraVez} />
 
-      <div className="flex w-full flex-1 items-center justify-center py-2">
+      <AjusteAlto>
         <Componente
           key={`${iAct}-${iRonda}`}
           ronda={ronda}
@@ -426,12 +447,13 @@ function Mision() {
           paso={aciertos}
           animal={claves.length ? claves : undefined}
           onRespuesta={onRespuesta}
+          onObjetivo={alObjetivo}
           onAyuda={() => {
             ayudaPedida.current = true;
             repeticiones.current += 1;
           }}
         />
-      </div>
+      </AjusteAlto>
     </section>
   );
 }

@@ -1265,3 +1265,500 @@
 @keyframes aparecer-suave {
   from { opacity: 0; }
 }
+
+/* ---------- Juegos: rompecabezas, figura, resortera, pesca, carrera, cocina ---------- */
+
+.sacudir {
+  animation: sacudir 0.42s var(--ease-mover);
+}
+@keyframes sacudir {
+  20% { transform: translateX(-8px) rotate(-3deg); }
+  45% { transform: translateX(7px) rotate(2deg); }
+  70% { transform: translateX(-4px); }
+}
+
+/* Rompecabezas */
+.puzzle-tablero {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.18);
+}
+.puzzle-celda {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  background: rgb(255 255 255 / 0.92);
+}
+.puzzle-siguiente::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 4px dashed var(--color-dorado);
+  animation: anillo 1.6s var(--ease-llegada) infinite;
+}
+.pieza-encaja {
+  border-radius: inherit;
+  animation: encaja 0.45s var(--ease-llegada);
+  box-shadow: inset 0 0 0 4px var(--color-menta);
+}
+@keyframes encaja {
+  from { opacity: 0; transform: scale(1.12); }
+}
+.puzzle-completo .puzzle-celda {
+  transition: border-radius 0.4s var(--ease-llegada);
+  border-radius: 0.25rem;
+}
+.puzzle-completo {
+  animation: encaja 0.6s var(--ease-llegada);
+}
+.pieza-puzzle {
+  background: #fff;
+}
+
+/* Arma la figura */
+.figura-hueco {
+  background: rgb(255 255 255 / 0.06);
+}
+.figura-hueco.hueco-lleno {
+  background: transparent;
+  box-shadow: none;
+}
+.figura-hueco-activo {
+  box-shadow: 0 0 0 4px var(--color-dorado);
+}
+.figura-parte-puesta {
+  animation: encaja 0.4s var(--ease-llegada);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.figura-lista.figura-cohete svg {
+  animation: cohete-despega 1.4s var(--ease-mover) 0.3s both;
+}
+@keyframes cohete-despega {
+  30% { transform: translateY(6px); }
+  100% { transform: translateY(-40px); }
+}
+.figura-lista.figura-casa svg {
+  animation: encaja 0.6s var(--ease-llegada);
+}
+.figura-lista.figura-robot svg {
+  animation: robot-saluda 0.9s ease-in-out 2;
+  transform-origin: 50% 100%;
+}
+@keyframes robot-saluda {
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
+
+/* Resortera */
+.resortera-escena {
+  background: linear-gradient(to bottom, #7ec8f0, #cdebfa 70%);
+}
+.ovillo {
+  will-change: transform;
+  touch-action: none;
+}
+.torre {
+  touch-action: manipulation;
+}
+.torre-letrero {
+  z-index: 1;
+}
+.torre-cae .torre-bloque,
+.torre-cae .torre-letrero {
+  animation: bloque-cae 0.9s var(--ease-llegada) forwards;
+}
+.torre-cae .torre-letrero {
+  --giro: 40deg;
+  --lejos: 90px;
+}
+@keyframes bloque-cae {
+  to { transform: translate(var(--lejos), 30px) rotate(var(--giro)); opacity: 0.2; }
+}
+.torre-duda {
+  animation: sacudir 0.5s var(--ease-mover);
+}
+
+/* Pesca */
+.pesca-escena {
+  background: linear-gradient(to bottom, #cdebfa 0 22%, #5fa6d6 22%, #2f6fa8);
+}
+.pesca-ola {
+  position: absolute;
+  inset: 19% -10% auto;
+  height: 2rem;
+  background: radial-gradient(circle at 1rem 0, transparent 1rem, #5fa6d6 1.05rem) 0 0 / 2rem 2rem repeat-x;
+  animation: ola-mueve 6s linear infinite;
+}
+@keyframes ola-mueve {
+  to { transform: translateX(2rem); }
+}
+.pez-derecha {
+  left: 0;
+  animation: nadar-derecha var(--dur, 10s) linear forwards;
+}
+.pez-izquierda {
+  left: 0;
+  animation: nadar-izquierda var(--dur, 10s) linear forwards;
+}
+@keyframes nadar-derecha {
+  from { transform: translateX(-9rem); }
+  to { transform: translateX(min(56rem, 100cqw)); }
+}
+@keyframes nadar-izquierda {
+  from { transform: translateX(min(56rem, 100cqw)); }
+  to { transform: translateX(-9rem); }
+}
+.pesca-escena {
+  container-type: inline-size;
+}
+.pez-cuerpo {
+  animation: pez-aleteo 1.2s ease-in-out infinite alternate;
+}
+@keyframes pez-aleteo {
+  to { translate: 0 -5px; }
+}
+.pez-no .pez-cuerpo {
+  animation: pez-duda 0.5s var(--ease-mover);
+}
+@keyframes pez-duda {
+  30% { rotate: -10deg; }
+  70% { rotate: 8deg; }
+}
+.pez-pista .pez-cuerpo {
+  filter: drop-shadow(0 0 10px var(--color-dorado));
+}
+.pesca-linea {
+  animation: linea-baja 0.25s var(--ease-llegada);
+}
+@keyframes linea-baja {
+  from { transform: scaleY(0); }
+}
+
+/* Carrera del cohete */
+.carrera-escena {
+  background: linear-gradient(to bottom, #1d1740, #3b2f72);
+}
+.carrera-estrellas {
+  position: absolute;
+  inset: -100% 0 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 70% 60%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 45% 80%, #ffd166 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 15%, #fff 50%, transparent 51%);
+  background-size: 100% 50%;
+  animation: estrellas-bajan 4s linear infinite;
+}
+@keyframes estrellas-bajan {
+  to { transform: translateY(50%); }
+}
+.carrera-fila-llega {
+  animation: fila-llega 0.9s var(--ease-llegada) both;
+}
+@keyframes fila-llega {
+  from { transform: translateY(-11rem); opacity: 0; }
+}
+.carrera-estrella {
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+.estrella-atrapada {
+  animation: estrella-atrapada 0.6s var(--ease-llegada) forwards;
+}
+@keyframes estrella-atrapada {
+  to { transform: translateY(13rem) scale(0.4); opacity: 0; }
+}
+.estrella-apagada {
+  animation: sacudir 0.45s var(--ease-mover);
+  filter: grayscale(0.8);
+}
+.carrera-cohete {
+  transition: transform 0.28s var(--ease-mover);
+}
+.carrera-fuego {
+  animation: fuego 0.18s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+@keyframes fuego {
+  to { transform: scaleY(0.7); }
+}
+
+/* Cocina */
+.cocina-mesa {
+  background: #c9a27c;
+  box-shadow: inset 0 -10px 0 rgb(0 0 0 / 0.12), 0 0 0 4px var(--color-tinta);
+}
+.cocina-olla {
+  background: transparent;
+  box-shadow: none;
+}
+.cocina-olla.hueco-encima {
+  transform: scale(1.04);
+}
+.olla-burbujas circle {
+  animation: burbuja 0.7s var(--ease-llegada);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes burbuja {
+  from { transform: translateY(8px) scale(0.4); opacity: 0; }
+}
+.olla-flota {
+  animation: olla-flota 2.4s ease-in-out infinite alternate;
+}
+@keyframes olla-flota {
+  to { transform: translateY(-5px) rotate(6deg); }
+}
+.cocina-vapor {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 1.4rem;
+  transition: opacity 0.5s ease;
+}
+.cocina-vapor span {
+  width: 0.9rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.55);
+  animation: vapor 2.2s ease-in-out infinite;
+}
+.cocina-vapor span:nth-child(2) { animation-delay: -0.7s; }
+.cocina-vapor span:nth-child(3) { animation-delay: -1.4s; }
+@keyframes vapor {
+  from { transform: translateY(10px) scaleY(0.6); opacity: 0; }
+  50% { opacity: 1; }
+  to { transform: translateY(-26px) scaleY(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrera-estrellas,
+  .pesca-ola,
+  .pez-cuerpo,
+  .olla-flota,
+  .cocina-vapor span,
+  .carrera-fuego {
+    animation: none;
+  }
+}
+.sin-movimiento .carrera-estrellas,
+.sin-movimiento .pesca-ola,
+.sin-movimiento .pez-cuerpo,
+.sin-movimiento .olla-flota,
+.sin-movimiento .cocina-vapor span {
+  animation: none;
+}
+
+/* ---------- Mi casa (isométrica) ---------- */
+
+.casa-escena {
+  filter: drop-shadow(0 30px 30px rgb(10 6 30 / 0.35));
+}
+.baldosa {
+  stroke: rgb(43 36 64 / 0.12);
+  stroke-width: 1;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .baldosa:hover {
+    fill: rgb(255 255 255 / 0.55);
+  }
+}
+.baldosa-libre {
+  fill: rgb(255 209 102 / 0.45);
+  stroke: var(--color-dorado);
+  stroke-width: 2;
+}
+.casa-decorando .baldosa {
+  stroke: rgb(43 36 64 / 0.3);
+}
+
+.objeto-casa {
+  position: relative;
+  display: block;
+  pointer-events: none;
+}
+.objeto-casa svg * {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+}
+.objeto-casa:focus-visible {
+  outline: none;
+}
+.objeto-casa:focus-visible svg {
+  filter: drop-shadow(0 0 0 #fff) drop-shadow(0 0 6px var(--color-dorado));
+}
+.objeto-cerrado svg {
+  filter: saturate(0.35) brightness(0.92);
+}
+.objeto-actual svg {
+  filter: drop-shadow(0 0 10px rgb(255 209 102 / 0.95));
+}
+.objeto-marca {
+  position: absolute;
+  left: 50%;
+  top: 34px;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 3px solid var(--color-tinta);
+  pointer-events: none;
+}
+.marca-actual {
+  width: 2.6rem;
+  height: 2.6rem;
+  background: var(--color-dorado);
+  color: var(--color-tinta);
+  animation: marca-salta 1.4s var(--ease-mover) infinite;
+}
+.marca-abierta {
+  width: 2rem;
+  height: 2rem;
+  background: #fff;
+  color: var(--color-lavanda-oscuro);
+}
+.marca-cerrada {
+  width: 2rem;
+  height: 2rem;
+  background: #ddd5f3;
+  color: var(--color-tinta);
+}
+@keyframes marca-salta {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-10px); }
+}
+.objeto-animal {
+  position: absolute;
+  right: -14px;
+  bottom: 6px;
+  pointer-events: none;
+  animation: flotar 4s ease-in-out infinite;
+}
+.mueble-fijo svg * {
+  pointer-events: none;
+}
+.mueble-pisable {
+  z-index: -1;
+}
+.mueble-editable svg {
+  filter: drop-shadow(0 0 0 transparent);
+}
+.mueble-elegido svg {
+  filter: drop-shadow(0 0 8px var(--color-dorado)) drop-shadow(0 0 2px #fff);
+  animation: mueble-elegido 0.9s ease-in-out infinite alternate;
+}
+@keyframes mueble-elegido {
+  to { transform: translateY(-6px); }
+}
+.sprite-brillo {
+  animation: sprite-brillo 2.6s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes sprite-brillo {
+  to { opacity: 0.5; transform: scale(1.12); }
+}
+.sprite-pez {
+  animation: sprite-pez 3s ease-in-out infinite alternate;
+}
+@keyframes sprite-pez {
+  to { transform: translateX(16px); }
+}
+
+.personaje {
+  transition-property: transform;
+  transition-timing-function: linear;
+  pointer-events: none;
+}
+.personaje-sombra {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 54px;
+  height: 18px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: rgb(43 36 64 / 0.22);
+}
+.personaje-camina {
+  animation: personaje-camina 0.23s ease-in-out infinite alternate;
+}
+@keyframes personaje-camina {
+  from { transform: translateY(0) rotate(-3deg); }
+  to { transform: translateY(-7px) rotate(3deg); }
+}
+.personaje-quieto {
+  animation: flotar 3.2s ease-in-out infinite;
+}
+
+.casa-globo {
+  width: 300px;
+  padding: 0.85rem 1rem;
+  border-radius: 1.4rem;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--color-tinta), 0 14px 30px -14px rgb(10 6 30 / 0.6);
+  animation: globo-aparece 0.25s var(--ease-llegada);
+}
+@keyframes globo-aparece {
+  from { opacity: 0; translate: 0 6px; }
+}
+
+.puerta-casa {
+  cursor: pointer;
+  outline: none;
+}
+.puerta-hoja {
+  transition: opacity 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .puerta-casa:hover .puerta-hoja {
+    opacity: 0.8;
+  }
+}
+.puerta-casa:focus-visible polygon:first-child {
+  stroke: var(--color-dorado);
+  stroke-width: 5;
+}
+.puerta-cerrada .puerta-hoja {
+  opacity: 0.55;
+}
+
+.panel-decorar {
+  animation: demo-entra 0.3s var(--ease-llegada) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marca-actual,
+  .objeto-animal,
+  .personaje-camina,
+  .personaje-quieto,
+  .sprite-brillo,
+  .sprite-pez,
+  .mueble-elegido svg {
+    animation: none;
+  }
+}
+.sin-movimiento .marca-actual,
+.sin-movimiento .personaje-camina,
+.sin-movimiento .personaje-quieto,
+.sin-movimiento .objeto-animal {
+  animation: none;
+}
+.casa-dialogo {
+  background: #fff;
+  color: var(--color-tinta);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease-llegada);
+  pointer-events: none;
+}
+.casa-dialogo-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}

@@ -2,6 +2,7 @@
 // Hoy guarda en el navegador (bd.ts); mañana cada función hará un fetch.
 // Las reglas de negocio que viven aquí (RN-xx) se repetirán en el backend.
 
+import { MUEBLES, obtenerMueble, regaloDeMision, type Mueble } from "../datos/casa";
 import { MISIONES, obtenerMision } from "../datos/contenido";
 import type {
   ColorPelaje,
@@ -9,7 +10,9 @@ import type {
   EstadoSesion,
   Intento,
   Jugador,
+  AjusteCuarto,
   Mision,
+  MuebleJugador,
   Rol,
   SesionJuego,
   Usuario,
@@ -251,6 +254,8 @@ export async function iniciarMision(idJugador: string, idMision: string): Promis
 
 export interface ResultadoMision {
   primeraVez: boolean;
+  /** Mueble que regala el animal al ser rescatado por primera vez. */
+  regalo?: Mueble;
   patitasGanadas: number;
   saldo: number;
   siguiente?: Mision;
@@ -296,7 +301,11 @@ export async function completarMision(idJugador: string, idMision: string, idSes
         bd.progreso.push({ idJugador, idMision: siguiente.id, estado: "disponible", patitasOtorgadas: 0 });
       }
     }
-    return { primeraVez, patitasGanadas: primeraVez ? mision.patitas : 0, saldo, siguiente };
+    const regalo = primeraVez ? regaloDeMision(idMision) : undefined;
+    if (regalo && !bd.muebles.some((m) => m.idJugador === idJugador && m.idMueble === regalo.id)) {
+      bd.muebles.push({ id: nuevoId(), idJugador, idMueble: regalo.id, origen: "regalo", en: ahora });
+    }
+    return { primeraVez, regalo, patitasGanadas: primeraVez ? mision.patitas : 0, saldo, siguiente };
   });
 }
 
@@ -418,4 +427,76 @@ export async function resumenSesiones(idJugador: string, limite = 8): Promise<Re
         misiones: [...new Set(propios.map((i) => i.idMision))],
       };
     });
+}
+
+// ======================= Mi casa =======================
+
+/** Muebles del jugador. Entrega los regalos de animales ya rescatados que falten. */
+export async function mueblesDe(idJugador: string): Promise<MuebleJugador[]> {
+  await pausa(30);
+  jugadorPropio(idJugador);
+  const estados = estadosMisiones(idJugador);
+  const faltan = MUEBLES.filter(
+    (m) => m.regaloDe && estados[m.regaloDe] === "completado" && !leer().muebles.some((x) => x.idJugador === idJugador && x.idMueble === m.id),
+  );
+  if (faltan.length) {
+    transaccion((bd) => {
+      for (const m of faltan) bd.muebles.push({ id: nuevoId(), idJugador, idMueble: m.id, origen: "regalo", en: ahoraIso() });
+    });
+  }
+  return leer().muebles.filter((m) => m.idJugador === idJugador);
+}
+
+/** Compra un mueble con patitas (paw_transactions con motivo «compra»). */
+export async function comprarMueble(idJugador: string, idMueble: string): Promise<{ saldo: number; mueble: MuebleJugador }> {
+  await pausa(60);
+  const jugador = jugadorPropio(idJugador);
+  const m = obtenerMueble(idMueble);
+  if (!m || m.precio === undefined) throw new ErrorApi("Ese mueble no está en la tienda.");
+  if (jugador.patitas < m.precio) throw new ErrorApi("Aún no tienes patitas suficientes.");
+  return transaccion((bd) => {
+    const saldo = jugador.patitas - m.precio!;
+    bd.jugadores = bd.jugadores.map((j) => (j.id === idJugador ? { ...j, patitas: saldo } : j));
+    bd.movimientos.push({ id: nuevoId(), idJugador, cantidad: -m.precio!, motivo: "compra", en: ahoraIso() });
+    const mueble: MuebleJugador = { id: nuevoId(), idJugador, idMueble, origen: "compra", en: ahoraIso() };
+    bd.muebles.push(mueble);
+    return { saldo, mueble };
+  });
+}
+
+/** Coloca un mueble en una baldosa del cuarto, o lo guarda en el baúl (sin cuarto). */
+export async function moverMueble(idJugador: string, id: string, lugar: { cuarto: string; c: number; r: number } | null): Promise<void> {
+  await pausa(20);
+  jugadorPropio(idJugador);
+  transaccion((bd) => {
+    bd.muebles = bd.muebles.map((m) =>
+      m.id === id && m.idJugador === idJugador ? (lugar ? { ...m, ...lugar } : { ...m, cuarto: undefined, c: undefined, r: undefined }) : m,
+    );
+  });
+}
+
+/** Colores y posiciones que el niño eligió para sus cuartos. */
+export async function ajustesDe(idJugador: string): Promise<AjusteCuarto[]> {
+  await pausa(20);
+  jugadorPropio(idJugador);
+  return leer().cuartos.filter((c) => c.idJugador === idJugador);
+}
+
+export async function guardarAjuste(
+  idJugador: string,
+  cuarto: string,
+  cambio: { paredes?: [string, string]; piso?: [string, string]; posicion?: { indice: number; c: number; r: number } },
+): Promise<void> {
+  await pausa(20);
+  jugadorPropio(idJugador);
+  transaccion((bd) => {
+    let a = bd.cuartos.find((x) => x.idJugador === idJugador && x.cuarto === cuarto);
+    if (!a) {
+      a = { idJugador, cuarto, posiciones: {} };
+      bd.cuartos.push(a);
+    }
+    if (cambio.paredes) a.paredes = cambio.paredes;
+    if (cambio.piso) a.piso = cambio.piso;
+    if (cambio.posicion) a.posiciones[String(cambio.posicion.indice)] = [cambio.posicion.c, cambio.posicion.r];
+  });
 }

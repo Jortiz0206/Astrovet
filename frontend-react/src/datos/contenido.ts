@@ -178,6 +178,45 @@ function regalo(id: string, items: [string, string, string[]][]): Actividad {
   return { id, tipo: "feed_animal", rondas: items.map(([o, r, otros]) => ({ objetivo: o, respuesta: r, opciones: [r, ...otros] })) };
 }
 
+/** Rompecabezas: [dibujo, sonidos de las 4 piezas en orden, 2 piezas de otro rompecabezas]. */
+function rompecabezas(id: string, items: [string, string[], string[]][]): Actividad {
+  return { id, tipo: "puzzle", rondas: items.map(([p, sec, extra]) => ({ objetivo: p, respuesta: p, secuencia: sec, opciones: [...sec, ...extra] })) };
+}
+
+/** Arma la figura: [figura, letras de sus partes]. */
+function figura(id: string, items: [NonNullable<Ronda["figura"]>, string[]][]): Actividad {
+  return { id, tipo: "build_figure", rondas: items.map(([f, letras]) => ({ objetivo: f, respuesta: f, figura: f, secuencia: letras, opciones: letras })) };
+}
+
+/** Resortera: una torre correcta y dos distractoras por ronda. */
+function resortera(id: string, objetivos: string[], pool: readonly string[]): Actividad {
+  return { id, tipo: "slingshot", rondas: objetivos.map((o, i) => ({ objetivo: o, respuesta: o, opciones: [o, ...distractores(o, pool, 2, i)] })) };
+}
+
+/** Pesca: peces con el objetivo y tres sonidos distractores. */
+function pesca(id: string, objetivos: string[], pool: readonly string[], meta = 3): Actividad {
+  return { id, tipo: "fishing", rondas: objetivos.map((o, i) => ({ objetivo: o, respuesta: o, opciones: [o, ...distractores(o, pool, 3, i)], meta })) };
+}
+
+/** Carrera del cohete: filas de tres estrellas, una con el objetivo. */
+function carrera(id: string, objetivos: string[], pool: readonly string[], filas = 3): Actividad {
+  return {
+    id,
+    tipo: "rocket_race",
+    rondas: objetivos.map((o, i) => ({
+      objetivo: o,
+      respuesta: o,
+      opciones: [o],
+      filas: Array.from({ length: filas }, (_, f) => [o, ...distractores(o, pool, 2, i + f)]),
+    })),
+  };
+}
+
+/** Cocina: [sonido, ingredientes en la mesa] (van a la olla los que empiezan con el sonido). */
+function cocina(id: string, items: [string, string[]][]): Actividad {
+  return { id, tipo: "cooking", rondas: items.map(([o, palabras]) => ({ objetivo: o, respuesta: o, opciones: palabras })) };
+}
+
 function animal(nombre: string, especie: string, ...claves: ClaveCriatura[]): Animal {
   return { nombre, especie, claves };
 }
@@ -210,28 +249,28 @@ const mundo1: Mundo = {
       traza("M1.2-3", ["E"]),
     ]),
     mision(1, 3, "La nube de la I", animal("Isa", "iguana", "iguana"), "I; IGUANA, ISLA", [
-      globos("M1.3-1", ["I"], V),
+      pesca("M1.3-1", ["I"], V),
       regalo("M1.3-2", [["I", "ISLA", ["OSO", "UVAS"]], ["I", "IGUANA", ["ABEJA", "ESTRELLA"]]]),
       memoria("M1.3-3", [["I", "IGUANA"], ["A", "AVIÓN"], ["E", "ELEFANTE"]]),
     ]),
     mision(1, 4, "La nube de la O", animal("Otto", "oso", "oso"), "O; OSO, OVEJA", [
-      traza("M1.4-1", ["O"]),
-      piedras("M1.4-2", ["O"], V),
+      figura("M1.4-1", [["cohete", ["O", "A", "E", "U"]]]),
+      traza("M1.4-2", ["O"]),
       cazaEstrellas("M1.4-3", ["O"], V),
     ]),
     mision(1, 5, "La nube de la U", animal("Uli", "unicornio", "unicornio"), "U; UVAS, UÑA", [
       regalo("M1.5-1", [["U", "UVAS", ["ISLA", "AVIÓN"]], ["U", "UÑA", ["OVEJA", "ESTRELLA"]]]),
-      globos("M1.5-2", ["U"], V),
+      resortera("M1.5-2", ["U", "U"], V),
       clasifica("M1.5-3", ["U", "A"], ["UVAS", "ABEJA", "UÑA", "AVIÓN"]),
     ]),
     mision(1, 6, "El coro de vocales", animal("Tula", "tortuga", "tortuga"), "Repaso de A, E, I, O, U", [
       eco("M1.6-1", [["A", "E"], ["O", "I"], ["U", "A", "E"]], V),
-      clasifica("M1.6-2", ["E", "O"], ["ELEFANTE", "OSO", "ESTRELLA", "OVEJA"]),
+      rompecabezas("M1.6-2", [["OVEJA", ["O", "E", "A", "U"], ["I"]]]),
       memoria("M1.6-3", [["A", "AVIÓN"], ["E", "ESTRELLA"], ["O", "OVEJA"], ["U", "UVAS"]]),
     ], 20),
     mision(1, 7, "Gran rescate: la tormenta de nubes", animal("La familia pato", "patos", "pato", "pato", "pato"), "Las 5 vocales mezcladas", [
-      piedras("M1.7-1", ["A", "I"], V),
-      escuchaElige("M1.7-2", ["U", "A", "I"], V, 4),
+      cocina("M1.7-1", [["A", ["AJO", "AGUACATE", "PAN", "PERA", "LECHE", "SAL"]]]),
+      carrera("M1.7-2", ["I", "U"], V),
       regalo("M1.7-3", [["O", "OVEJA", ["ISLA", "UVAS"]], ["E", "ESTRELLA", ["ABEJA", "UÑA"]]]),
       traza("M1.7-4", ["U"]),
     ], 30),
@@ -262,46 +301,46 @@ const mundo2: Mundo = {
     ]),
     mision(2, 2, "La escalera de la M", mimi, "MA, ME, MI, MO, MU", [
       unePiezas("M2.2-1", ["MA", "ME", "MI"]),
-      piedras("M2.2-2", ["MO"], SIL("M")),
+      carrera("M2.2-2", ["MO"], SIL("M")),
       ruleta("M2.2-3", ["MU", "ME"]),
     ]),
     mision(2, 3, "El sonido de Pepe", pepe, "Sonido /p/", [
       regalo("M2.3-1", [["P", "PATO", ["MESA", "OSO"]], ["P", "PELOTA", ["MANZANA", "UVAS"]], ["P", "PERRO", ["MAPA", "ISLA"]]]),
-      escuchaElige("M2.3-2", ["P"], ["M", "A", "O", "E"]),
+      pesca("M2.3-2", ["P"], ["M", "A", "O", "E"]),
       traza("M2.3-3", ["P"]),
     ]),
     mision(2, 4, "La escalera de la P", pepe, "PA, PE, PI, PO, PU", [
-      ruleta("M2.4-1", ["PO", "PU", "PA"]),
+      resortera("M2.4-1", ["PO", "PU", "PA"], [...SIL("P"), "MA", "MO"]),
       eco("M2.4-2", [["PA", "PE"], ["PI", "PO", "PU"]], SIL("P")),
       intrusa("M2.4-3", [[["PA", "PE"], "MA"], [["PO", "PU"], "MI"], [["MA", "ME"], "PI"]]),
     ]),
     mision(2, 5, "El sonido de Sisi", sisi, "Sonido /s/", [
-      clasifica("M2.5-1", ["S", "M"], ["SAPO", "MANZANA", "SOL", "MESA", "SANDÍA", "MAPA"]),
+      cocina("M2.5-1", [["S", ["SANDÍA", "SAL", "PAN", "MAÍZ", "LIMÓN", "PERA"]]]),
       globos("M2.5-2", ["S"], ["M", "P", "A", "O"]),
       memoria("M2.5-3", [["S", "SAPO"], ["M", "MANZANA"], ["P", "PATO"]]),
     ]),
     mision(2, 6, "La escalera de la S", sisi, "SA, SE, SI, SO, SU", [
-      unePiezas("M2.6-1", ["SA", "SE", "SI"]),
+      figura("M2.6-1", [["casa", ["SA", "SE", "SI", "SO"]]]),
       piedras("M2.6-2", ["SO", "SU"], [...SIL("S"), "MA", "PE"]),
       escuchaElige("M2.6-3", ["SU", "SA", "SO"], [...SIL("S"), "MA", "PE"]),
     ]),
     mision(2, 7, "El sonido de Lalo", lalo, "Sonido /l/", [
       sonidoInicial("M2.7-1", ["LEÓN", "LUNA", "LUPA"], ["M", "P", "S", "A", "O"]),
       traza("M2.7-2", ["L"]),
-      cazaEstrellas("M2.7-3", ["L"], ["M", "P", "S"]),
+      pesca("M2.7-3", ["L"], ["M", "P", "S", "A"]),
     ]),
     mision(2, 8, "La escalera de la L", lalo, "LA, LE, LI, LO, LU", [
-      eco("M2.8-1", [["LA", "LE"], ["LI", "LO", "LU"]], SIL("L")),
+      rompecabezas("M2.8-1", [["LUNA", ["LA", "LE", "LI", "LO"], ["SA", "PE"]]]),
       ruleta("M2.8-2", ["LO", "LU", "LE"]),
       intrusa("M2.8-3", [[["LA", "LO"], "SA"], [["LE", "LI"], "PE"], [["SA", "SO"], "LU"]]),
     ]),
     mision(2, 9, "Mezcla lunar", animal("Nina", "lechuza", "lechuza"), "Repaso de las 20 sílabas", [
-      memoria("M2.9-1", [["MA", "MAPA"], ["PE", "PERRO"], ["SO", "SOL"], ["LU", "LUNA"]]),
+      cocina("M2.9-1", [["M", ["MANZANA", "MAÍZ", "MANGO", "PAN", "PERA", "LECHE"]], ["P", ["PAN", "PERA", "LIMÓN", "SAL", "MANGO", "LECHE"]]]),
       clasifica("M2.9-2", ["P", "L"], ["PATO", "LUNA", "PELOTA", "LEÓN", "PERRO", "LUPA"]),
       globos("M2.9-3", ["PU", "SI"], TODAS_SIL, 2),
     ], 20),
     mision(2, 10, "Gran rescate: el cráter gigante", animal("Paca", "burra", "burra"), "Sílabas mezcladas y primeras palabras", [
-      piedras("M2.10-1", ["SA", "LI"], TODAS_SIL),
+      carrera("M2.10-1", ["SA", "LI"], TODAS_SIL),
       unePiezas("M2.10-2", ["PU", "SO", "LA"]),
       regalo("M2.10-3", [["L", "LIMA", ["SOPA", "MESA"]], ["S", "SOPA", ["PELOTA", "LUNA"]]]),
       intrusa("M2.10-4", [[["MU", "MO", "MA"], "SI"], [["LI", "LA", "LE"], "PO"]]),
@@ -327,27 +366,29 @@ const mundo3: Mundo = {
       leeEncuentra("M3.1-3", ["MAPA", "MESA", "MAMÁ"], ["SOPA", "LUPA", "OSO", "MESA", "MAPA"]),
     ]),
     mision(3, 2, "La sopa de Paco", animal("Paco", "puma", "puma"), "SOPA, SAPO, PALA, PALO", [
-      piedras("M3.2-1", ["SOPA"], ["SAPO", "SALA", "PALO"]),
+      rompecabezas("M3.2-1", [["SOPA", ["S", "O", "P", "A"], ["M", "L"]]]),
       silabaPerdida("M3.2-2", [["PALA", ["PA", "LA"], 1, ["LO", "MU"]], ["PALO", ["PA", "LO"], 1, ["LA", "SE"]]]),
       armaPalabra("M3.2-3", [["SOPA", ["SO", "PA"]], ["SAPO", ["SA", "PO"], "LA"]]),
     ]),
     mision(3, 3, "La lupa de Lupe", animal("Lupe", "mula", "mula"), "LUPA, LIMA, MULA, LOMA", [
-      leeEncuentra("M3.3-1", ["LUPA", "LIMA"], ["LOMA", "MULA", "PALA"]),
+      pesca("M3.3-1", ["LUPA"], ["LIMA", "LOMA", "MULA", "PALA"], 2),
+      leeEncuentra("M3.3-1b", ["LIMA"], ["LOMA", "MULA", "PALA"]),
       regalo("M3.3-2", [["LU", "LUPA", ["LIMA", "MULA"]], ["MU", "MULA", ["LOMA", "MESA"]]]),
       intrusa("M3.3-3", [[["LUPA", "LIMA"], "MESA"], [["MAPA", "MULA"], "SOPA"]]),
     ]),
     mision(3, 4, "Las olas de Lola", animal("Lola", "tortuga marina", "tortuga-marina"), "OLA, ALA, OSO, PISO", [
+      figura("M3.4-0", [["robot", ["O", "L", "A", "S"]]]),
       armaPalabra("M3.4-1", [["OLA", ["O", "LA"]], ["ALA", ["A", "LA"]], ["OSO", ["O", "SO"]], ["PISO", ["PI", "SO"]]]),
       clasifica("M3.4-2", ["O", "A"], ["OLA", "ALA", "OSO", "AVIÓN", "OVEJA", "ABEJA"]),
-      memoria("M3.4-3", [["OLA", "OLA"], ["OSO", "OSO"], ["ALA", "ALA"]]),
+
     ]),
     mision(3, 5, "La casa de los mimos", animal("Mimí y Pepe", "mona y pingüino", "mona", "pinguino"), "PAPÁ, MIMO, PELO, SALA", [
       silabaPerdida("M3.5-1", [["PELO", ["PE", "LO"], 1, ["LA", "MA"]], ["SALA", ["SA", "LA"], 0, ["PI", "MU"]]]),
-      globos("M3.5-2", ["MIMO"], ["MAMÁ", "PAPÁ", "MULA", "LIMA"], 2),
+      cocina("M3.5-2", [["L", ["LIMA", "LIMÓN", "LECHE", "PAN", "MAÍZ", "SAL"]]]),
       armaPalabra("M3.5-3", [["PAPÁ", ["PA", "PÁ"], "MI"], ["MIMO", ["MI", "MO"], "PA"], ["SALA", ["SA", "LA"], "LO"]]),
     ], 20),
     mision(3, 6, "Gran rescate: los carteles de la selva", animal("Todos los animales", "amigos de la luna", "mona", "leon", "pinguino"), "Palabras de los mundos 2 y 3", [
-      piedras("M3.6-1", ["PUMA"], ["PALA", "MULA", "LOMA"]),
+      resortera("M3.6-1", ["PUMA", "LOMA"], ["PALA", "MULA", "LOMA", "PUMA"]),
       armaPalabra("M3.6-2", [["PALO", ["PA", "LO"], "MA"], ["LUPA", ["LU", "PA"], "SO"]]),
       leeEncuentra("M3.6-3", ["PUMA", "LOMA"], ["MULA", "LIMA", "SAPO"]),
       silabaPerdida("M3.6-4", [["SOPA", ["SO", "PA"], 0, ["MA", "LI"]], ["MESA", ["ME", "SA"], 1, ["PO", "LU"]]]),

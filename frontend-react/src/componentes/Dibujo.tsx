@@ -300,6 +300,85 @@ const OBJETOS: Record<string, ReactNode> = {
       <path d="M6 104 L34 44 H86 L114 104 Z" fill="none" {...P} />
     </>
   ),
+  AJO: (
+    <>
+      <path d="M60 22 C52 34 26 44 26 72 C26 96 44 104 60 104 C76 104 94 96 94 72 C94 44 68 34 60 22 Z" fill="#FBF7EC" {...P} />
+      <path d="M60 30 C54 50 50 76 56 102 M60 30 C68 50 72 76 66 102 M44 46 C36 62 36 84 44 100 M76 46 C84 62 84 84 76 100" fill="none" stroke="#D8CDB2" strokeWidth="3" />
+      <path d="M60 22 C58 14 60 10 64 6" fill="none" stroke="#8A7A5A" strokeWidth="4" strokeLinecap="round" />
+    </>
+  ),
+  AGUACATE: (
+    <>
+      <path d="M60 10 C40 12 32 40 26 62 C18 92 38 110 60 110 C82 110 102 92 94 62 C88 40 80 12 60 10 Z" fill="#4F8F45" {...P} />
+      <path d="M60 22 C46 24 42 46 38 64 C32 88 46 100 60 100 C74 100 88 88 82 64 C78 46 74 24 60 22 Z" fill="#CBE69A" />
+      <circle cx="60" cy="74" r="16" fill="#A0673D" {...P} />
+      <path d="M54 68 C56 64 60 62 63 63" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+    </>
+  ),
+  PAN: (
+    <>
+      <path d="M14 70 C14 42 36 30 60 30 C84 30 106 42 106 70 C106 84 98 90 86 90 H34 C22 90 14 84 14 70 Z" fill="#E7B36A" {...P} />
+      <path d="M40 46 L48 62 M58 42 L64 60 M76 46 L80 62" fill="none" stroke="#B57A33" strokeWidth="4" strokeLinecap="round" />
+      <path d="M24 66 C26 54 32 48 40 44" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" opacity="0.6" />
+    </>
+  ),
+  PERA: (
+    <>
+      <path d="M60 28 C48 28 46 44 46 52 C46 62 22 70 24 92 C26 108 44 112 60 112 C76 112 94 108 96 92 C98 70 74 62 74 52 C74 44 72 28 60 28 Z" fill="#C9DB6A" {...P} />
+      <path d="M60 28 C60 20 62 14 66 8" fill="none" stroke="#5C3B24" strokeWidth="5" strokeLinecap="round" />
+      <path d="M64 18 C72 8 88 10 90 18 C80 24 70 22 64 18 Z" fill="#6FBF8E" {...P} />
+      <path d="M38 84 C38 76 42 72 48 70" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity="0.7" />
+    </>
+  ),
+  "MAÍZ": (
+    <>
+      <path d="M60 10 C40 14 36 50 38 78 C40 98 50 108 60 108 C70 108 80 98 82 78 C84 50 80 14 60 10 Z" fill="#FFD166" {...P} />
+      {Array.from({ length: 5 }, (_, f) =>
+        [46, 60, 74].map((x) => <circle key={`${f}-${x}`} cx={x} cy={30 + f * 15} r="5" fill="#F2B632" />),
+      )}
+      <path d="M58 108 C40 98 22 80 24 56 C34 72 46 86 60 92 Z M62 108 C80 98 98 80 96 56 C86 72 74 86 60 92 Z" fill="#6FBF8E" {...P} />
+    </>
+  ),
+  MANGO: (
+    <>
+      <path d="M30 48 C40 22 84 18 98 44 C110 70 92 104 62 106 C32 108 18 78 30 48 Z" fill="#FFB347" {...P} />
+      <path d="M30 48 C40 22 70 20 84 30 C70 34 50 46 40 70 C34 66 28 58 30 48 Z" fill="#E86A5E" opacity="0.55" />
+      <path d="M84 30 C88 20 94 14 100 12" fill="none" stroke="#5C3B24" strokeWidth="5" strokeLinecap="round" />
+      <path d="M92 18 C98 6 112 8 114 14 C106 20 98 20 92 18 Z" fill="#6FBF8E" {...P} />
+    </>
+  ),
+  LECHE: (
+    <>
+      <path d="M36 30 H84 V104 C84 108 82 110 78 110 H42 C38 110 36 108 36 104 Z" fill="#fff" {...P} />
+      <path d="M36 30 L46 14 H74 L84 30 Z" fill="#9FD3F2" {...P} />
+      <rect x="36" y="56" width="48" height="26" fill="#9FD3F2" {...P} />
+      <path d="M52 64 C56 60 64 60 68 64 C64 70 56 72 52 64 Z" fill="#fff" />
+    </>
+  ),
+  "LIMÓN": (
+    <>
+      <path d="M16 62 C16 40 40 26 60 26 C80 26 104 40 104 62 C104 84 80 98 60 98 C40 98 16 84 16 62 Z" fill="#FFE066" {...P} />
+      <path d="M16 62 L6 58 M104 62 L114 58" stroke={T} strokeWidth="4" strokeLinecap="round" />
+      <path d="M36 50 C40 42 48 38 56 37" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+    </>
+  ),
+  SAL: (
+    <>
+      <path d="M40 40 H80 V104 C80 108 78 110 74 110 H46 C42 110 40 108 40 104 Z" fill="#F4F1FB" {...P} />
+      <path d="M40 40 C40 22 80 22 80 40 Z" fill="#B9A8E6" {...P} />
+      <circle cx="54" cy="30" r="2.5" fill={T} />
+      <circle cx="60" cy="27" r="2.5" fill={T} />
+      <circle cx="66" cy="30" r="2.5" fill={T} />
+      <rect x="46" y="62" width="28" height="18" rx="4" fill="#DDD5F3" />
+    </>
+  ),
+  OLLA: (
+    <>
+      <path d="M18 50 H102 V88 C102 102 90 110 76 110 H44 C30 110 18 102 18 88 Z" fill="#8E7CC3" {...P} />
+      <path d="M8 56 H18 M102 56 H112" stroke={T} strokeWidth="6" strokeLinecap="round" />
+      <rect x="12" y="42" width="96" height="12" rx="6" fill="#B9A8E6" {...P} />
+    </>
+  ),
   SALA: (
     <>
       <rect x="20" y="40" width="80" height="34" rx="12" fill="#B9A8E6" {...P} />

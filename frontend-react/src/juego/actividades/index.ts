@@ -1,7 +1,13 @@
 import { CONSIGNAS, ELIGE_DIBUJO, SIN_SONIDO_INICIAL } from "../../datos/guion";
 import type { Locucion } from "../../servicios/audio";
 import type { Actividad, Ronda, TipoActividad } from "../../tipos";
+import ArmaFigura from "./ArmaFigura";
 import ArmaPalabra from "./ArmaPalabra";
+import CarreraCohete from "./CarreraCohete";
+import Cocina from "./Cocina";
+import Pesca from "./Pesca";
+import Resortera from "./Resortera";
+import Rompecabezas from "./Rompecabezas";
 import CazaEstrellas from "./CazaEstrellas";
 import Clasifica from "./Clasifica";
 import type { PropsActividad } from "./comunes";
@@ -37,12 +43,19 @@ export const COMPONENTES: Record<TipoActividad, (p: PropsActividad) => React.Rea
   trace_letter: Traza,
   echo_sequence: Eco,
   feed_animal: Regalo,
+  puzzle: Rompecabezas,
+  build_figure: ArmaFigura,
+  slingshot: Resortera,
+  fishing: Pesca,
+  rocket_race: CarreraCohete,
+  cooking: Cocina,
 };
 
 /** Una consigna a la vez: la instrucción y, cuando corresponde, el sonido objetivo. */
 export function audioRonda(act: Actividad, r: Ronda): Locucion[] {
   if (act.tipo === "sort_two" && r.grupos) return [CONSIGNAS.sort_two, { c: r.grupos[0] }, { c: r.grupos[1] }];
   if (SIN_SONIDO_INICIAL.has(act.tipo)) return [CONSIGNAS[act.tipo]];
+  if (act.tipo === "puzzle") return [CONSIGNAS.puzzle, { c: r.secuencia?.[0] ?? r.objetivo }];
   return [CONSIGNAS[act.tipo], { c: act.tipo === "feed_animal" ? r.objetivo : r.objetivo }];
 }
 
@@ -58,8 +71,14 @@ function buscado(act: Actividad, r: Ronda): string {
  * Retroalimentación de un error: nombra lo que el niño eligió y lo que se
  * busca, sin reproche. Devuelve el texto para el globo y lo que se dice.
  */
-export function retroalimentacion(act: Actividad, r: Ronda, elegido: string): { texto: string; voz: Locucion[] } {
-  const meta = buscado(act, r);
+export function retroalimentacion(act: Actividad, r: Ronda, elegido: string, actual?: string): { texto: string; voz: Locucion[] } {
+  const meta = actual ?? buscado(act, r);
+  if (act.tipo === "build_figure") {
+    return { texto: `Esa pieza es «${elegido.toLowerCase()}». Ese lugar es de «${meta.toLowerCase()}».`, voz: ["Esa pieza es", { c: elegido }, "Ese lugar es de", { c: meta }] };
+  }
+  if (act.tipo === "cooking") {
+    return { texto: `Eso es ${elegido.toLowerCase()}. A la olla va lo que empieza con «${meta.toLowerCase()}».`, voz: ["Eso es", { c: elegido }, "A la olla va lo que empieza con", { c: meta }] };
+  }
   if (act.tipo === "sort_two") {
     const [dibujo] = elegido.split("→");
     const grupo = r.grupos?.find((g) => dibujo.startsWith(g)) ?? "";
@@ -80,7 +99,9 @@ export function retroalimentacion(act: Actividad, r: Ronda, elegido: string): { 
 }
 
 /** Lo que Misi dice al ayudar: la respuesta, como sonido. */
-export function respuestaDicha(act: Actividad, r: Ronda): Locucion {
+export function respuestaDicha(act: Actividad, r: Ronda, actual?: string): Locucion {
+  if (actual) return { c: actual };
+  if (act.tipo === "cooking") return { c: r.objetivo };
   if (act.tipo === "build_syllable" || act.tipo === "vowel_wheel") return { c: r.objetivo };
   if (act.tipo === "echo_sequence") return { c: (r.secuencia ?? []).join(" ") };
   if (act.tipo === "feed_animal" || act.tipo === "build_word_syllables") return { c: r.respuesta };

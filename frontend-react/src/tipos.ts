@@ -96,6 +96,28 @@ export interface MovimientoPatitas {
   en: string;
 }
 
+// Muebles del jugador en «Mi casa» (player_items). Sin cuarto: guardado en el baúl.
+export interface MuebleJugador {
+  id: string;
+  idJugador: string;
+  idMueble: string;
+  origen: "compra" | "regalo";
+  cuarto?: string;
+  c?: number;
+  r?: number;
+  en: string;
+}
+
+// Cómo decoró el niño cada cuarto: colores y posición de los objetos de misión.
+export interface AjusteCuarto {
+  idJugador: string;
+  cuarto: string;
+  paredes?: [string, string];
+  piso?: [string, string];
+  /** Índice del objeto de misión → baldosa elegida. */
+  posiciones: Record<string, [number, number]>;
+}
+
 // ---------- Contenido de aprendizaje ----------
 
 export type TipoActividad =
@@ -115,7 +137,13 @@ export type TipoActividad =
   | "sort_two" // Clasifica en dos planetas por el primer sonido
   | "trace_letter" // ACT-23 Traza la estela
   | "echo_sequence" // Eco de Misi: repite la secuencia
-  | "feed_animal"; // Regalo para el animal
+  | "feed_animal" // Regalo para el animal
+  | "puzzle" // Rompecabezas: cada pieza lleva un sonido
+  | "build_figure" // Arma la figura: pieza con letra en su lugar
+  | "slingshot" // Resortera: lanza el ovillo a la torre del sonido
+  | "fishing" // Pesca los peces con el sonido
+  | "rocket_race" // Carrera del cohete: elige el carril del sonido
+  | "cooking"; // Cocina: a la olla lo que empieza con el sonido
 
 export interface Ronda {
   /** Lo que se trabaja: la letra o la palabra que suena. */
@@ -138,8 +166,10 @@ export interface Ronda {
   filas?: string[][];
   /** sort_two: los dos sonidos (planetas) en los que se clasifica. */
   grupos?: [string, string];
-  /** echo_sequence: lo que Misi dice y el niño repite en orden. */
+  /** echo_sequence: lo que Misi dice y el niño repite en orden. puzzle/build_figure: sonido de cada pieza. */
   secuencia?: string[];
+  /** build_figure: qué figura se arma. */
+  figura?: "cohete" | "casa" | "robot";
 }
 
 export interface Actividad {

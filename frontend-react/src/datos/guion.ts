@@ -16,6 +16,11 @@ export const GUION = {
 
   // Dentro de una ronda (falta poco).
   paso: ["¡Sí! Sigue buscando.", "¡Una más!", "¡Muy bien, sigue!", "¡Bien! ¿Hay otra?", "¡Esa sí! Sigue así."],
+  ahora: ["Ahora:", "Ahora busca:", "La siguiente:"],
+  pesca: ["¡Picó!", "¡A la cubeta!", "¡Qué buen pez!"],
+  olla: ["¡Splash! A la olla.", "¡Huele rico!", "¡Eso va en la sopa!"],
+  torre: ["¡Derribada!", "¡Justo en el blanco!", "¡Pum! ¡Bien lanzado!"],
+  carril: ["¡Atrapada!", "¡Buen vuelo!", "¡Directo a la estrella!"],
   cruza: ["¡Saltó!", "¡Una piedra más!", "¡Qué buen salto!", "¡Ya casi llega a la orilla!"],
   regalo: ["¡Le encantó!", "¡Gracias!", "¡Mira qué feliz está!", "¡Justo lo que quería!"],
   pieza: ["¡Esa va ahí!", "¡Bien! Falta otra pieza.", "¡Encaja!"],
@@ -70,10 +75,16 @@ export const CONSIGNAS = {
   trace_letter: "Sigue la estela con tu dedo:",
   echo_sequence: "Escucha a Misi y repite en el mismo orden.",
   feed_animal: "Llévale al animal lo que empieza con:",
+  puzzle: "Arma el rompecabezas. Busca la pieza con:",
+  build_figure: "Arma la figura: lleva cada pieza al lugar de su letra.",
+  slingshot: "Estira la resortera y lanza el ovillo a la torre con:",
+  fishing: "Pesca los peces que suenan así:",
+  rocket_race: "Guía el cohete hacia las estrellas con:",
+  cooking: "Echa a la olla lo que empieza con:",
 } as const;
 
 /** Tipos en los que la consigna no va seguida de un sonido objetivo. */
-export const SIN_SONIDO_INICIAL = new Set(["memory_pairs", "read_match", "odd_one", "sort_two", "echo_sequence"]);
+export const SIN_SONIDO_INICIAL = new Set(["memory_pairs", "read_match", "odd_one", "sort_two", "echo_sequence", "build_figure"]);
 
 /** Juegos donde lo que se elige es un dibujo (la retroalimentación nombra la palabra). */
-export const ELIGE_DIBUJO = new Set(["picture_word", "read_match", "feed_animal", "sort_two"]);
+export const ELIGE_DIBUJO = new Set(["picture_word", "read_match", "feed_animal", "sort_two", "cooking"]);

@@ -32,7 +32,7 @@ export default function Vestidor() {
       <div className="flex w-full items-center">
         <Link to="/juego" viewTransition className="flex min-h-12 items-center gap-2 rounded-full bg-white/10 px-4 font-bold ring-1 ring-white/15 hover:bg-white/20">
           <Icono nombre="flecha-izq" tamano={20} />
-          Centro espacial
+          Mi casa
         </Link>
       </div>
       <h1 className="text-3xl font-black sm:text-4xl">Vestidor de Misi</h1>

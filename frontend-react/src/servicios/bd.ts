@@ -5,7 +5,9 @@
 import type {
   Intento,
   Jugador,
+  AjusteCuarto,
   MovimientoPatitas,
+  MuebleJugador,
   ProgresoMision,
   SesionJuego,
   Usuario,
@@ -20,6 +22,8 @@ export interface BaseDatos {
   sesiones: SesionJuego[];
   intentos: Intento[];
   movimientos: MovimientoPatitas[];
+  muebles: MuebleJugador[];
+  cuartos: AjusteCuarto[];
 }
 
 let cache: BaseDatos | null = null;
@@ -54,7 +58,7 @@ export function hashSimulado(texto: string, sal: string): string {
 }
 
 function vacia(): BaseDatos {
-  return { usuarios: [], jugadores: [], progreso: [], sesiones: [], intentos: [], movimientos: [] };
+  return { usuarios: [], jugadores: [], progreso: [], sesiones: [], intentos: [], movimientos: [], muebles: [], cuartos: [] };
 }
 
 /** Datos ficticios para probar sin registrarse (sección 18.1). */
